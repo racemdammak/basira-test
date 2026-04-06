@@ -135,9 +135,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get french => 'Français';
 
   @override
-  String get tunisian => 'تونسي';
-
-  @override
   String get english => 'English';
 
   @override
@@ -222,4 +219,171 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get now => 'Now';
+
+  @override
+  String get busSchedules => 'Bus Schedules';
+
+  @override
+  String get nearbyStations => 'Nearby Stations';
+
+  @override
+  String get crowdPatterns => 'Crowd Patterns';
+
+  @override
+  String get aboutSoretras => 'About SORETRAS';
+
+  @override
+  String get aboutSubtitle => 'Contact, fares & complaints';
+
+  @override
+  String get welcomeText => 'Welcome';
+
+  @override
+  String get welcomeSubtitle => 'Your smart Sfax bus companion';
+
+  @override
+  String get ourServices => 'Our Services';
+
+  @override
+  String get noFavoritesYet => 'No favorites yet\nStar a route to save it here';
+
+  @override
+  String get noTripHistoryYet =>
+      'No trip history yet\nYour recent trips will appear here';
+
+  @override
+  String get favorites => 'Favorites';
+
+  @override
+  String get history => 'History';
+
+  @override
+  String get suggestedDestinations => 'Suggested destinations from';
+
+  @override
+  String get suggestedOrigins => 'Suggested origins to';
+
+  @override
+  String get allStations => 'All stations';
+
+  @override
+  String get typeToSearch => 'Type to search...';
+
+  @override
+  String get liveTracking => 'Live Tracking';
+
+  @override
+  String get reportDelay => 'Report Delay';
+
+  @override
+  String get howLateIsBus => 'How late is the bus?';
+
+  @override
+  String get submit => 'Submit';
+
+  @override
+  String get shareRoute => 'Share route';
+
+  @override
+  String get routeCopied => 'Route copied to clipboard!';
+
+  @override
+  String get delayReported => 'Delay reported. Thank you!';
+
+  @override
+  String get onBus => 'On bus';
+
+  @override
+  String get waitingForBus => 'Waiting for bus...';
+
+  @override
+  String get contact => 'Contact';
+
+  @override
+  String get workingHours => 'Working Hours';
+
+  @override
+  String get fares => 'Fares';
+
+  @override
+  String get complaintsFeedback => 'Complaints & Feedback';
+
+  @override
+  String get phone => 'Phone';
+
+  @override
+  String get fax => 'Fax';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get address => 'Address';
+
+  @override
+  String get standardFare => 'Standard fare';
+
+  @override
+  String get go => 'Go';
+
+  @override
+  String get nextDepartures => 'Next Departures';
+
+  @override
+  String get noMoreDepartures => 'No more departures today';
+
+  @override
+  String get stations => 'Stations';
+
+  @override
+  String get veryCrowded => 'Very Crowded';
+
+  @override
+  String get moderate => 'Moderate';
+
+  @override
+  String get usuallyAvailable => 'Usually Available';
+
+  @override
+  String get rightNow => 'Right now';
+
+  @override
+  String get expectedCrowding => 'Expected crowding throughout the day:';
+
+  @override
+  String get line => 'Line';
+
+  @override
+  String get aboutDescription =>
+      'SORETRAS (Société Régionale de Transport du Sahel) provides public bus transportation across Sfax and surrounding areas. Established to serve the citizens with reliable and affordable transit.';
+
+  @override
+  String get workingHoursDetail =>
+      'Buses operate daily from 05:30 to 22:00.\nHead office open Monday to Friday, 08:00 - 17:00.';
+
+  @override
+  String get faresDetail =>
+      'Standard fare: 0.50 TND (cash)\nSubscription card: 0.35 TND per ride\nStudent discount available with valid card.';
+
+  @override
+  String get complaintsDetail =>
+      'To file a complaint or provide feedback:\n1. Call the complaints line: +216 74 240 042\n2. Email: reclamations@soretras.tn\n3. Visit the head office in person\n\nPlease provide:\n- Bus line number\n- Time of incident\n- Station name';
+
+  @override
+  String get noRouteDirect => 'No direct route found.';
+
+  @override
+  String get changeNeeded => 'You may need to change buses';
+
+  @override
+  String get invalidTripData => 'Invalid trip data';
+
+  @override
+  String get arrivingAt => 'Arriving at';
+
+  @override
+  String get minToDestination => 'min to destination';
+
+  @override
+  String get tunisian => 'Tunisian';
 }

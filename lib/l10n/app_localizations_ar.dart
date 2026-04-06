@@ -135,9 +135,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get french => 'Français';
 
   @override
-  String get tunisian => 'تونسي';
-
-  @override
   String get english => 'English';
 
   @override
@@ -221,4 +218,171 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get now => 'الآن';
+
+  @override
+  String get busSchedules => 'مواعيد الحافلات';
+
+  @override
+  String get nearbyStations => 'المحطات القريبة';
+
+  @override
+  String get crowdPatterns => 'أنماط الازدحام';
+
+  @override
+  String get aboutSoretras => 'عن سورتاس';
+
+  @override
+  String get aboutSubtitle => 'معلومات الاتصال والأسعار والشكاوى';
+
+  @override
+  String get welcomeText => 'مرحباً بك';
+
+  @override
+  String get welcomeSubtitle => 'رفيقك الذكي في صفاقس';
+
+  @override
+  String get ourServices => 'خدماتنا';
+
+  @override
+  String get noFavoritesYet => 'لا توجد مفضلات بعد\nأضف نجماً لمسار لحفظه هنا';
+
+  @override
+  String get noTripHistoryYet =>
+      'لا يوجد سجل رحلات بعد\nستظهر رحلاتك الأخيرة هنا';
+
+  @override
+  String get favorites => 'المفضلات';
+
+  @override
+  String get history => 'السجل';
+
+  @override
+  String get suggestedDestinations => 'الوجهات المقترحة من';
+
+  @override
+  String get suggestedOrigins => 'نقاط الانطلاق المقترحة إلى';
+
+  @override
+  String get allStations => 'جميع المحطات';
+
+  @override
+  String get typeToSearch => 'اكتب للبحث...';
+
+  @override
+  String get liveTracking => 'التتبع المباشر';
+
+  @override
+  String get reportDelay => 'الإبلاغ عن تأخير';
+
+  @override
+  String get howLateIsBus => 'كم تأخر الحافلة؟';
+
+  @override
+  String get submit => 'إرسال';
+
+  @override
+  String get shareRoute => 'مشاركة المسار';
+
+  @override
+  String get routeCopied => 'تم نسخ المسار إلى الحافظة!';
+
+  @override
+  String get delayReported => 'تم الإبلاغ عن التأخير. شكراً!';
+
+  @override
+  String get onBus => 'على الحافلة';
+
+  @override
+  String get waitingForBus => 'في انتظار الحافلة...';
+
+  @override
+  String get contact => 'الاتصال';
+
+  @override
+  String get workingHours => 'ساعات العمل';
+
+  @override
+  String get fares => 'الأسعار';
+
+  @override
+  String get complaintsFeedback => 'الشكاوى والملاحظات';
+
+  @override
+  String get phone => 'الهاتف';
+
+  @override
+  String get fax => 'الفاكس';
+
+  @override
+  String get email => 'البريد الإلكتروني';
+
+  @override
+  String get address => 'العنوان';
+
+  @override
+  String get standardFare => 'التذكرة العادية';
+
+  @override
+  String get go => 'انطلق';
+
+  @override
+  String get nextDepartures => 'المغادرات القادمة';
+
+  @override
+  String get noMoreDepartures => 'لا توجد مغادرات أخرى اليوم';
+
+  @override
+  String get stations => 'المحطات';
+
+  @override
+  String get veryCrowded => 'مزدحم جداً';
+
+  @override
+  String get moderate => 'معتدل';
+
+  @override
+  String get usuallyAvailable => 'متاح عادةً';
+
+  @override
+  String get rightNow => 'الآن';
+
+  @override
+  String get expectedCrowding => 'الازدحام المتوقع طوال اليوم:';
+
+  @override
+  String get line => 'خط';
+
+  @override
+  String get aboutDescription =>
+      'سورتاس (الشركة الجهوية للنقل بالساحل) توفر النقل بالحافلات عبر صفاقس والمناطق المحيطة. تأسست لخدمة المواطنين بوسائل نقل موثوقة وبأسعار معقولة.';
+
+  @override
+  String get workingHoursDetail =>
+      'تعمل الحافلات يومياً من 05:30 إلى 22:00.\nمقر الإدارة مفتوح من الاثنين إلى الجمعة، من 08:00 إلى 17:00.';
+
+  @override
+  String get faresDetail =>
+      'التذكرة العادية: 0.50 دينار تونسي (نقداً)\nبطاقة الاشتراك: 0.35 دينار تونسي للرحلة\nخصم للطلاب متاح ببطاقة صالحة.';
+
+  @override
+  String get complaintsDetail =>
+      'لتقديم شكوى أو تقديم ملاحظات:\n1. اتصل بخط الشكاوى: 042 240 74 216+\n2. البريد الإلكتروني: reclamations@soretras.tn\n3. قم بزيارة مقر الإدارة شخصياً\n\nيرجى تقديم:\n- رقم خط الحافلة\n- وقت الحادث\n- اسم المحطة';
+
+  @override
+  String get noRouteDirect => 'لم يتم العثور على مسار مباشر.';
+
+  @override
+  String get changeNeeded => 'قد تحتاج إلى تغيير الحافلة';
+
+  @override
+  String get invalidTripData => 'بيانات الرحلة غير صالحة';
+
+  @override
+  String get arrivingAt => 'الوصول إلى';
+
+  @override
+  String get minToDestination => 'دقيقة إلى الوجهة';
+
+  @override
+  String get tunisian => 'Tunisian';
 }

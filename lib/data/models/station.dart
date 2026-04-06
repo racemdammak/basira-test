@@ -23,8 +23,6 @@ class Station {
         return nameAr;
       case 'fr':
         return nameFr;
-      case 'tun':
-        return nameTun;
       default:
         return nameFr;
     }

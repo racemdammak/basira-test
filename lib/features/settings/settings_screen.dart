@@ -4,6 +4,7 @@ import '../../l10n/app_localizations.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/providers.dart';
+import '../about/about_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -51,7 +52,6 @@ class SettingsScreen extends ConsumerWidget {
                       _langChip(l10n.english, 'en', currentLocale, ref),
                       _langChip(l10n.arabic, 'ar', currentLocale, ref),
                       _langChip(l10n.french, 'fr', currentLocale, ref),
-                      _langChip(l10n.tunisian, 'tun', currentLocale, ref),
                     ],
                   ),
                 ],
@@ -147,6 +147,22 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                 ],
               ),
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          // About SORETRAS
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.info_outline, color: AppColors.primary),
+              title: Text(l10n.aboutSoretras),
+              subtitle: Text(l10n.aboutSubtitle),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const AboutScreen()),
+                );
+              },
             ),
           ),
         ],

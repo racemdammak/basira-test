@@ -354,12 +354,6 @@ abstract class AppLocalizations {
   /// **'Français'**
   String get french;
 
-  /// No description provided for @tunisian.
-  ///
-  /// In en, this message translates to:
-  /// **'تونسي'**
-  String get tunisian;
-
   /// No description provided for @english.
   ///
   /// In en, this message translates to:
@@ -527,6 +521,330 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Now'**
   String get now;
+
+  /// No description provided for @busSchedules.
+  ///
+  /// In en, this message translates to:
+  /// **'Bus Schedules'**
+  String get busSchedules;
+
+  /// No description provided for @nearbyStations.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearby Stations'**
+  String get nearbyStations;
+
+  /// No description provided for @crowdPatterns.
+  ///
+  /// In en, this message translates to:
+  /// **'Crowd Patterns'**
+  String get crowdPatterns;
+
+  /// No description provided for @aboutSoretras.
+  ///
+  /// In en, this message translates to:
+  /// **'About SORETRAS'**
+  String get aboutSoretras;
+
+  /// No description provided for @aboutSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact, fares & complaints'**
+  String get aboutSubtitle;
+
+  /// No description provided for @welcomeText.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome'**
+  String get welcomeText;
+
+  /// No description provided for @welcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your smart Sfax bus companion'**
+  String get welcomeSubtitle;
+
+  /// No description provided for @ourServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Our Services'**
+  String get ourServices;
+
+  /// No description provided for @noFavoritesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorites yet\nStar a route to save it here'**
+  String get noFavoritesYet;
+
+  /// No description provided for @noTripHistoryYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No trip history yet\nYour recent trips will appear here'**
+  String get noTripHistoryYet;
+
+  /// No description provided for @favorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get favorites;
+
+  /// No description provided for @history.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get history;
+
+  /// No description provided for @suggestedDestinations.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested destinations from'**
+  String get suggestedDestinations;
+
+  /// No description provided for @suggestedOrigins.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested origins to'**
+  String get suggestedOrigins;
+
+  /// No description provided for @allStations.
+  ///
+  /// In en, this message translates to:
+  /// **'All stations'**
+  String get allStations;
+
+  /// No description provided for @typeToSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Type to search...'**
+  String get typeToSearch;
+
+  /// No description provided for @liveTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Tracking'**
+  String get liveTracking;
+
+  /// No description provided for @reportDelay.
+  ///
+  /// In en, this message translates to:
+  /// **'Report Delay'**
+  String get reportDelay;
+
+  /// No description provided for @howLateIsBus.
+  ///
+  /// In en, this message translates to:
+  /// **'How late is the bus?'**
+  String get howLateIsBus;
+
+  /// No description provided for @submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submit;
+
+  /// No description provided for @shareRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'Share route'**
+  String get shareRoute;
+
+  /// No description provided for @routeCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Route copied to clipboard!'**
+  String get routeCopied;
+
+  /// No description provided for @delayReported.
+  ///
+  /// In en, this message translates to:
+  /// **'Delay reported. Thank you!'**
+  String get delayReported;
+
+  /// No description provided for @onBus.
+  ///
+  /// In en, this message translates to:
+  /// **'On bus'**
+  String get onBus;
+
+  /// No description provided for @waitingForBus.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for bus...'**
+  String get waitingForBus;
+
+  /// No description provided for @contact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get contact;
+
+  /// No description provided for @workingHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Working Hours'**
+  String get workingHours;
+
+  /// No description provided for @fares.
+  ///
+  /// In en, this message translates to:
+  /// **'Fares'**
+  String get fares;
+
+  /// No description provided for @complaintsFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Complaints & Feedback'**
+  String get complaintsFeedback;
+
+  /// No description provided for @phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get phone;
+
+  /// No description provided for @fax.
+  ///
+  /// In en, this message translates to:
+  /// **'Fax'**
+  String get fax;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @address.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get address;
+
+  /// No description provided for @standardFare.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard fare'**
+  String get standardFare;
+
+  /// No description provided for @go.
+  ///
+  /// In en, this message translates to:
+  /// **'Go'**
+  String get go;
+
+  /// No description provided for @nextDepartures.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Departures'**
+  String get nextDepartures;
+
+  /// No description provided for @noMoreDepartures.
+  ///
+  /// In en, this message translates to:
+  /// **'No more departures today'**
+  String get noMoreDepartures;
+
+  /// No description provided for @stations.
+  ///
+  /// In en, this message translates to:
+  /// **'Stations'**
+  String get stations;
+
+  /// No description provided for @veryCrowded.
+  ///
+  /// In en, this message translates to:
+  /// **'Very Crowded'**
+  String get veryCrowded;
+
+  /// No description provided for @moderate.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate'**
+  String get moderate;
+
+  /// No description provided for @usuallyAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Usually Available'**
+  String get usuallyAvailable;
+
+  /// No description provided for @rightNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Right now'**
+  String get rightNow;
+
+  /// No description provided for @expectedCrowding.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected crowding throughout the day:'**
+  String get expectedCrowding;
+
+  /// No description provided for @line.
+  ///
+  /// In en, this message translates to:
+  /// **'Line'**
+  String get line;
+
+  /// No description provided for @aboutDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'SORETRAS (Société Régionale de Transport du Sahel) provides public bus transportation across Sfax and surrounding areas. Established to serve the citizens with reliable and affordable transit.'**
+  String get aboutDescription;
+
+  /// No description provided for @workingHoursDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Buses operate daily from 05:30 to 22:00.\nHead office open Monday to Friday, 08:00 - 17:00.'**
+  String get workingHoursDetail;
+
+  /// No description provided for @faresDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard fare: 0.50 TND (cash)\nSubscription card: 0.35 TND per ride\nStudent discount available with valid card.'**
+  String get faresDetail;
+
+  /// No description provided for @complaintsDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'To file a complaint or provide feedback:\n1. Call the complaints line: +216 74 240 042\n2. Email: reclamations@soretras.tn\n3. Visit the head office in person\n\nPlease provide:\n- Bus line number\n- Time of incident\n- Station name'**
+  String get complaintsDetail;
+
+  /// No description provided for @noRouteDirect.
+  ///
+  /// In en, this message translates to:
+  /// **'No direct route found.'**
+  String get noRouteDirect;
+
+  /// No description provided for @changeNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'You may need to change buses'**
+  String get changeNeeded;
+
+  /// No description provided for @invalidTripData.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid trip data'**
+  String get invalidTripData;
+
+  /// No description provided for @arrivingAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Arriving at'**
+  String get arrivingAt;
+
+  /// No description provided for @minToDestination.
+  ///
+  /// In en, this message translates to:
+  /// **'min to destination'**
+  String get minToDestination;
+
+  /// No description provided for @tunisian.
+  ///
+  /// In en, this message translates to:
+  /// **'Tunisian'**
+  String get tunisian;
 }
 
 class _AppLocalizationsDelegate

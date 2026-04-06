@@ -6,6 +6,9 @@ import '../../core/constants/app_colors.dart';
 import '../../core/providers.dart';
 import '../../data/models/station.dart';
 import '../../data/models/trip.dart';
+import '../../data/models/favorite_route.dart';
+import '../../data/services/storage_service.dart';
+import '../../data/services/travel_time_service.dart';
 import 'trip_active_screen.dart';
 
 class TripPlannerScreen extends ConsumerWidget {
@@ -34,7 +37,7 @@ class TripPlannerScreen extends ConsumerWidget {
       ),
       body: tripsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, _) => Center(child: Text(l10n.error)),
         data: (trips) {
           if (trips.isEmpty) {
             return Center(
@@ -76,11 +79,25 @@ class _TripCard extends ConsumerStatefulWidget {
 }
 
 class _TripCardState extends ConsumerState<_TripCard> {
+  bool isFavorited = false;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final trip = widget.trip;
     final minutes = trip.totalDuration.inMinutes;
+
+    // Check if already favorited
+    final storage = ref.read(storageServiceProvider);
+    isFavorited = storage.getFavorites().any(
+      (f) => f.originId == trip.origin.id && f.destinationId == trip.destination.id,
+    );
+
+    // Get travel estimate
+    final estimates = ref.watch(
+      travelEstimateProvider((originId: trip.origin.id, destinationId: trip.destination.id)),
+    );
+    final firstEstimate = estimates.isNotEmpty ? estimates.first : null;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -102,7 +119,7 @@ class _TripCardState extends ConsumerState<_TripCard> {
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16),
                       ),
-                      const Text('↓', textAlign: TextAlign.center),
+                      const Text('\u2193', textAlign: TextAlign.center),
                       Text(
                         trip.destination.nameForLocale(widget.code),
                         style: const TextStyle(
@@ -111,17 +128,32 @@ class _TripCardState extends ConsumerState<_TripCard> {
                     ],
                   ),
                 ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: AppColors.accent.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    '$minutes ${l10n.minutes}',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: AppColors.accent.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        '$minutes min',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    if (firstEstimate != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          firstEstimate.formattedFare,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ],
             ),
@@ -148,35 +180,67 @@ class _TripCardState extends ConsumerState<_TripCard> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      '${section.duration.inMinutes}min',
-                    ),
+                    Text('${section.duration.inMinutes}min'),
                   ],
                 ),
               ),
             const SizedBox(height: 12),
-            // Action button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  ref.read(activeTripProvider.notifier).state =
-                      ref.read(activeTripProvider).copyWith(
-                            originId: trip.origin.id,
-                            destinationId: trip.destination.id,
-                          );
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const TripActiveScreen(),
+            // Favorite + Take This Bus row
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      ref.read(activeTripProvider.notifier).state =
+                          ref.read(activeTripProvider).copyWith(
+                                originId: trip.origin.id,
+                                destinationId: trip.destination.id,
+                              );
+                      // Add to history
+                      storage.addToHistory(TripHistoryEntry(
+                        originId: trip.origin.id,
+                        destinationId: trip.destination.id,
+                        date: DateTime.now(),
+                        busLineUsed: trip.sections.first.busLineNumber,
+                      ));
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const TripActiveScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.directions_bus),
+                    label: Text(l10n.takeThisBus),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
-                  );
-                },
-                icon: const Icon(Icons.directions_bus),
-                label: Text(l10n.takeThisBus),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
                 ),
-              ),
+                const SizedBox(width: 8),
+                IconButton(
+                  onPressed: () {
+                    final favId = '${trip.origin.id}_${trip.destination.id}';
+                    if (isFavorited) {
+                      ref.read(storageServiceProvider).removeFavorite(favId);
+                    } else {
+                      ref.read(storageServiceProvider).addFavorite(
+                        FavoriteRoute(
+                          id: favId,
+                          originId: trip.origin.id,
+                          destinationId: trip.destination.id,
+                          createdAt: DateTime.now(),
+                        ),
+                      );
+                    }
+                    if (mounted) {
+                      ref.read(favoritesProvider.notifier).state =
+                          storage.getFavorites();
+                      setState(() => isFavorited = !isFavorited);
+                    }
+                  },
+                  icon: Icon(isFavorited ? Icons.star : Icons.star_border),
+                ),
+              ],
             ),
           ],
         ),

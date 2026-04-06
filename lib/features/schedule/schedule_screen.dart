@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../l10n/app_localizations.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/providers.dart';
 import '../../data/mock/buses_mock.dart';
 import '../../data/mock/stations_mock.dart';
 import '../../data/models/bus_line.dart';
+import '../../l10n/app_localizations.dart';
 
 class ScheduleScreen extends ConsumerWidget {
   const ScheduleScreen({super.key});
@@ -14,11 +14,12 @@ class ScheduleScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final code = ref.read(localeStringProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text('Bus Schedules',
+        title: Text(l10n.busSchedules,
             style: const TextStyle(fontWeight: FontWeight.w700)),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
@@ -102,7 +103,7 @@ class _BusLineCardState extends State<_BusLineCard> {
     final next = line.getNextDepartures(count: 5);
     final now = DateTime.now();
 
-    String _formatTime(DateTime d) {
+    String formatTime(DateTime d) {
       return '${d.hour}:${d.minute.toString().padLeft(2, '0')}';
     }
 
@@ -129,7 +130,7 @@ class _BusLineCardState extends State<_BusLineCard> {
                 final mins = dep.difference(now).inMinutes;
                 return Chip(
                   label: Text(
-                    '${_formatTime(dep)} ($mins min)',
+                    '${formatTime(dep)} ($mins min)',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: mins <= 5 ? Colors.green : null,

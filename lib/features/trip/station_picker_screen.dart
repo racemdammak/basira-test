@@ -4,14 +4,20 @@ import '../../l10n/app_localizations.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/providers.dart';
-import '../../data/models/bus_line.dart';
 import '../../data/models/station.dart';
 import '../../data/mock/stations_mock.dart';
 import '../../data/mock/buses_mock.dart';
 import 'trip_planner_screen.dart';
 
 class StationPickerScreen extends ConsumerStatefulWidget {
-  const StationPickerScreen({super.key});
+  final Station? preselectedOrigin;
+  final Station? preselectedDestination;
+
+  const StationPickerScreen({
+    super.key,
+    this.preselectedOrigin,
+    this.preselectedDestination,
+  });
 
   @override
   ConsumerState<StationPickerScreen> createState() =>
@@ -19,11 +25,25 @@ class StationPickerScreen extends ConsumerStatefulWidget {
 }
 
 class _StationPickerScreenState extends ConsumerState<StationPickerScreen> {
-  Station? _origin;
-  Station? _destination;
-  final TextEditingController _originController = TextEditingController();
-  final TextEditingController _destController = TextEditingController();
+  late Station? _origin;
+  late Station? _destination;
+  late final TextEditingController _originController = TextEditingController();
+  late final TextEditingController _destController = TextEditingController();
   bool _selectingOrigin = true;
+
+  @override
+  void initState() {
+    super.initState();
+    final code = ref.read(localeStringProvider);
+    _origin = widget.preselectedOrigin;
+    _destination = widget.preselectedDestination;
+    if (_origin != null) {
+      _originController.text = _origin!.nameForLocale(code);
+    }
+    if (_destination != null) {
+      _destController.text = _destination!.nameForLocale(code);
+    }
+  }
 
   @override
   void dispose() {
@@ -73,6 +93,7 @@ class _StationPickerScreenState extends ConsumerState<StationPickerScreen> {
             // Suggestions: show destinations if origin selected, origins if destination selected
             if (_origin != null && _destination == null)
               _buildSuggestions(
+                l10n: l10n,
                 selected: _origin!,
                 other: _destination,
                 code: code,
@@ -86,6 +107,7 @@ class _StationPickerScreenState extends ConsumerState<StationPickerScreen> {
               )
             else if (_destination != null && _origin == null)
               _buildSuggestions(
+                l10n: l10n,
                 selected: _destination!,
                 other: _origin,
                 code: code,
@@ -196,6 +218,7 @@ class _StationPickerScreenState extends ConsumerState<StationPickerScreen> {
   /// Show suggestions when a station is selected.
   /// If origin is set → suggest destinations. If destination is set → suggest origins.
   Widget _buildSuggestions({
+    required AppLocalizations l10n,
     required Station selected,
     required Station? other,
     required String code,
@@ -205,9 +228,8 @@ class _StationPickerScreenState extends ConsumerState<StationPickerScreen> {
     final reachable = _getAllReachable(selected);
     if (reachable.isEmpty) return const SizedBox.shrink();
 
-    final title = isOriginSelected
-        ? 'Stations from ${selected.nameForLocale(code)}:'
-        : 'Origins to ${selected.nameForLocale(code)}:';
+    final suggestionL10n = isOriginSelected ? l10n.suggestedDestinations : l10n.suggestedOrigins;
+    final title = '$suggestionL10n ${selected.nameForLocale(code)}:';
 
     return Container(
       constraints: const BoxConstraints(maxHeight: 220),
@@ -364,7 +386,6 @@ class _StationSearchSheetState extends ConsumerState<_StationSearchSheet> {
     final stations = allStations.values.where((s) {
       return s.nameFr.toLowerCase().contains(q) ||
           s.nameAr.contains(q) ||
-          s.nameTun.contains(q) ||
           s.id.contains(q);
     }).toList();
     setState(() => _results = stations);
@@ -387,9 +408,10 @@ class _StationSearchSheetState extends ConsumerState<_StationSearchSheet> {
     String? suggestionTitle;
     if (suggestFrom != null && suggestMode != null) {
       suggestions = _getAllReachable(suggestFrom);
-      suggestionTitle = suggestMode == _SuggestMode.destinations
-          ? 'Suggested destinations from ${suggestFrom.nameForLocale(code)}'
-          : 'Suggested origins to ${suggestFrom.nameForLocale(code)}';
+      final suggestionL10n = suggestMode == _SuggestMode.destinations
+          ? l10n.suggestedDestinations
+          : l10n.suggestedOrigins;
+      suggestionTitle = '$suggestionL10n ${suggestFrom.nameForLocale(code)}';
     }
 
     return SafeArea(
@@ -415,69 +437,16 @@ class _StationSearchSheetState extends ConsumerState<_StationSearchSheet> {
                 ),
               ),
               // Suggestions section
-              if (suggestions != null && suggestions!.isNotEmpty) ...[
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    suggestionTitle!,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Container(
-                  constraints: const BoxConstraints(maxHeight: 180),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: suggestions!.length,
-                    itemBuilder: (context, index) {
-                      final stationId = suggestions!.keys.elementAt(index);
-                      final lines = suggestions![stationId]!;
-                      final station = allStations[stationId];
-                      if (station == null) return const SizedBox.shrink();
-                      return ListTile(
-                        leading: Icon(
-                          suggestMode == _SuggestMode.destinations
-                              ? Icons.location_on_outlined
-                              : Icons.my_location,
-                          size: 20,
-                          color: AppColors.primary,
-                        ),
-                        title: Text(station.nameForLocale(code)),
-                        trailing: Wrap(
-                          spacing: 4,
-                          children: lines.map((ln) {
-                            return Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: AppColors.primary.withOpacity(0.15),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text('L$ln',
-                                  style: const TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.primary)),
-                            );
-                          }).toList(),
-                        ),
-                        onTap: () => widget.onSelect(station),
-                      );
-                    },
-                  ),
-                ),
-                const Divider(),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 4),
-                  child: Text('All stations', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                ),
-              ],
+              if (suggestions != null) ..._buildSuggestionList(suggestions, suggestionTitle ?? '', suggestMode, code),
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Text(l10n.allStations, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+              ),
               // Search results
               Expanded(
                 child: _results.isEmpty
-                    ? const Center(child: Text('Type to search...'))
+                    ? Center(child: Text(l10n.typeToSearch))
                     : ListView.builder(
                         itemCount: _results.length,
                         itemBuilder: (context, index) {
@@ -495,5 +464,67 @@ class _StationSearchSheetState extends ConsumerState<_StationSearchSheet> {
         ),
       ),
     );
+  }
+
+  List<Widget> _buildSuggestionList(
+    Map<String, Set<String>> suggestions,
+    String suggestionTitle,
+    _SuggestMode? suggestMode,
+    String code,
+  ) {
+    return [
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Text(
+          suggestionTitle,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
+          ),
+        ),
+      ),
+      const SizedBox(height: 4),
+      Container(
+        constraints: const BoxConstraints(maxHeight: 180),
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: suggestions.length,
+          itemBuilder: (context, index) {
+            final stationId = suggestions.keys.elementAt(index);
+            final lines = suggestions[stationId]!;
+            final station = allStations[stationId];
+            if (station == null) return const SizedBox.shrink();
+            return ListTile(
+              leading: Icon(
+                suggestMode == _SuggestMode.destinations
+                    ? Icons.location_on_outlined
+                    : Icons.my_location,
+                size: 20,
+                color: AppColors.primary,
+              ),
+              title: Text(station.nameForLocale(code)),
+              trailing: Wrap(
+                spacing: 4,
+                children: lines.map((ln) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text('L$ln',
+                        style: const TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary)),
+                  );
+                }).toList(),
+              ),
+              onTap: () => widget.onSelect(station),
+            );
+          },
+        ),
+      ),
+    ];
   }
 }
