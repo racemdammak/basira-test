@@ -62,7 +62,7 @@ class BasiraApp extends ConsumerWidget {
         return const Locale('en');
       },
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1B3A5C)),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF335836)),
         useMaterial3: true,
         appBarTheme: const AppBarTheme(
           elevation: 0,

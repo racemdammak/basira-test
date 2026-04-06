@@ -14,9 +14,6 @@
 .swiftpm/
 migrate_working_dir/
 
-# Secret configs
-.env
-env.json
 
 # IntelliJ related
 *.iml
