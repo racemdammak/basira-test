@@ -108,17 +108,31 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           MarkerLayer(markers: markers),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => const StationPickerScreen(),
-            ),
-          );
-        },
-        label: Text(l10n.planTrip),
-        icon: const Icon(Icons.directions_bus),
-        backgroundColor: AppColors.accent,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton(
+            heroTag: 'backToMenu',
+            onPressed: () => Navigator.of(context).pop(),
+            backgroundColor: AppColors.primary,
+            child: const Icon(Icons.arrow_back, color: Colors.white),
+          ),
+          const SizedBox(height: 12),
+          FloatingActionButton.extended(
+            heroTag: 'planTrip',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const StationPickerScreen(),
+                ),
+              );
+            },
+            label: Text(l10n.planTrip),
+            icon: const Icon(Icons.directions_bus),
+            backgroundColor: AppColors.accent,
+          ),
+        ],
       ),
     );
   }

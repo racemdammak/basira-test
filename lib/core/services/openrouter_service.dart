@@ -16,7 +16,7 @@ class OpenRouterService {
 
   OpenRouterService() {
     _dio = Dio(BaseOptions(
-      baseUrl: baseUrl,
+      baseUrl: openRouterBaseUrl,
       headers: {
         'Authorization': 'Bearer $openRouterApiKey',
         'Content-Type': 'application/json',
