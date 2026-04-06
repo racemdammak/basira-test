@@ -122,5 +122,7 @@
   "changeNeeded": "قد تحتاج إلى تغيير الحافلة",
   "invalidTripData": "بيانات الرحلة غير صالحة",
   "arrivingAt": "الوصول إلى",
-  "minToDestination": "دقيقة إلى الوجهة"
+  "minToDestination": "دقيقة إلى الوجهة",
+  "darkMode": "الوضع المظلم",
+  "darkModeSubtitle": "تبديل إلى السمة الداكنة"
 }

@@ -158,7 +158,7 @@ class _StationPickerScreenState extends ConsumerState<StationPickerScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.cardBackground,
+          color: Theme.of(context).cardTheme.color ?? Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: AppColors.primaryLight.withOpacity(0.3)),
         ),

@@ -123,5 +123,7 @@
   "changeNeeded": "تحتاج تبدّل الكار",
   "invalidTripData": "بيانات الرحلة ما تصحّش",
   "arrivingAt": "قاعدين نوصلو لـ",
-  "minToDestination": "دقايق للوجهة"
+  "minToDestination": "دقايق للوجهة",
+  "darkMode": "الوضع المظلم",
+  "darkModeSubtitle": "بدّل للسمّاء المظلمة"
 }

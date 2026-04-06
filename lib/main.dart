@@ -36,6 +36,7 @@ class BasiraApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(localeProvider);
     final fontSize = ref.watch(fontSizeProvider);
+    final isDarkMode = ref.watch(darkModeProvider);
 
     return MaterialApp(
       title: 'Basira',
@@ -61,25 +62,9 @@ class BasiraApp extends ConsumerWidget {
         }
         return const Locale('en');
       },
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF335836)),
-        useMaterial3: true,
-        appBarTheme: const AppBarTheme(
-          elevation: 0,
-          centerTitle: true,
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size(48, 48),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        ),
-        cardTheme: const CardThemeData(
-          elevation: 2,
-        ),
-      ),
+      theme: _buildThemeData(brightness: Brightness.light),
+      darkTheme: _buildThemeData(brightness: Brightness.dark),
+      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       builder: (context, child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(
@@ -90,6 +75,38 @@ class BasiraApp extends ConsumerWidget {
       },
       home: const HomeScreen(),
       debugShowCheckedModeBanner: false,
+    );
+  }
+
+  ThemeData _buildThemeData({required Brightness brightness}) {
+    final isDark = brightness == Brightness.dark;
+
+    return ThemeData(
+      brightness: brightness,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: const Color(0xFF335836),
+        brightness: brightness,
+      ),
+      useMaterial3: true,
+      appBarTheme: AppBarTheme(
+        elevation: 0,
+        centerTitle: true,
+        backgroundColor: isDark ? const Color(0xFF1A2E1C) : const Color(0xFF335836),
+        foregroundColor: isDark ? const Color(0xFF7CA971) : Colors.white,
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          minimumSize: const Size(48, 48),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+      cardTheme: CardThemeData(
+        elevation: 2,
+        color: isDark ? const Color(0xFF1E2E20) : Colors.white,
+      ),
+      scaffoldBackgroundColor: isDark ? const Color(0xFF121A14) : const Color(0xFFF5F0D6),
     );
   }
 }

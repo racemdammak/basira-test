@@ -28,7 +28,7 @@ class NearbyStationsScreen extends ConsumerWidget {
       });
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(l10n.nearbyStations),
         backgroundColor: AppColors.primary,

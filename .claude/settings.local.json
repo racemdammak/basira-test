@@ -5,7 +5,13 @@
       "Bash(flutter run:*)",
       "Bash(ls -la /d/basira/lib/l10n/*.arb)",
       "Bash(ls:*)",
-      "Bash(flutter analyze:*)"
+      "Bash(flutter analyze:*)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)",
+      "Bash(flutter pub:*)",
+      "Bash(dart run:*)",
+      "Bash(flutter gen-l10n:*)",
+      "Bash(echo \"EXIT: $?\")"
     ]
   }
 }

@@ -123,5 +123,7 @@
   "invalidTripData": "Invalid trip data",
   "arrivingAt": "Arriving at",
   "minToDestination": "min to destination",
-  "tunisian": "Tunisian"
+  "tunisian": "Tunisian",
+  "darkMode": "Dark Mode",
+  "darkModeSubtitle": "Switch to dark theme"
 }

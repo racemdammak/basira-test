@@ -123,5 +123,7 @@
   "invalidTripData": "Données de trajet invalides",
   "arrivingAt": "Arrivée à",
   "minToDestination": "min jusqu'à destination",
-  "tunisien": "Tunisien"
+  "tunisien": "Tunisien",
+  "darkMode": "Mode sombre",
+  "darkModeSubtitle": "Basculer vers le thème sombre"
 }

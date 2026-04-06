@@ -384,4 +384,10 @@ class AppLocalizationsTun extends AppLocalizations {
 
   @override
   String get tunisian => 'تونسي';
+
+  @override
+  String get darkMode => 'الوضع المظلم';
+
+  @override
+  String get darkModeSubtitle => 'بدّل للسمّاء المظلمة';
 }

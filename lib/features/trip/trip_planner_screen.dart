@@ -29,7 +29,7 @@ class TripPlannerScreen extends ConsumerWidget {
     final tripsAsync = ref.watch(tripOptionsProvider(search));
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(l10n.routePlanned),
         backgroundColor: AppColors.primary,
@@ -146,9 +146,9 @@ class _TripCardState extends ConsumerState<_TripCard> {
                         padding: const EdgeInsets.only(top: 4),
                         child: Text(
                           firstEstimate.formattedFare,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
-                            color: AppColors.textSecondary,
+                            color: Theme.of(context).textTheme.bodySmall?.color,
                             fontWeight: FontWeight.w600,
                           ),
                         ),

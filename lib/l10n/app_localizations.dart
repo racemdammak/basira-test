@@ -845,6 +845,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tunisian'**
   String get tunisian;
+
+  /// No description provided for @darkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get darkMode;
+
+  /// No description provided for @darkModeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to dark theme'**
+  String get darkModeSubtitle;
 }
 
 class _AppLocalizationsDelegate

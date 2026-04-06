@@ -23,7 +23,7 @@ class HomeScreen extends ConsumerWidget {
     final localeCode = ref.watch(localeStringProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(l10n.appTitle, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 24)),
         backgroundColor: Colors.transparent,
@@ -37,7 +37,7 @@ class HomeScreen extends ConsumerWidget {
             child: Container(
               margin: const EdgeInsets.only(right: 16.0, left: 16.0),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardTheme.color ?? Theme.of(context).colorScheme.surface,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
@@ -125,10 +125,10 @@ class HomeScreen extends ConsumerWidget {
                   padding: const EdgeInsets.only(bottom: 18.0, left: 4.0, right: 4.0),
                   child: Text(
                     localeCode == 'ar' ? 'خدماتنا' : 'Our Services',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
+                      color: Theme.of(context).textTheme.titleLarge?.color,
                     ),
                   ),
                 ),
@@ -239,7 +239,7 @@ class HomeScreen extends ConsumerWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: Theme.of(context).cardTheme.color ?? Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -272,17 +272,17 @@ class HomeScreen extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: Theme.of(context).textTheme.titleMedium?.color,
                     ),
                   ),
                 ),
                 Container(
                   padding: const EdgeInsets.all(10),
-                  decoration: const BoxDecoration(
-                    color: AppColors.background,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: AppColors.primaryLight),

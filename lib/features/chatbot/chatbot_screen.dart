@@ -29,7 +29,7 @@ class _ChatbotScreenState extends ConsumerState<ChatbotScreen> {
     final isLoading = ref.watch(chatIsLoadingProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(l10n.chatbot),
         backgroundColor: AppColors.primary,
@@ -69,7 +69,7 @@ class _ChatbotScreenState extends ConsumerState<ChatbotScreen> {
                         vertical: 4, horizontal: 8),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: isUser ? AppColors.primaryLight : Colors.white,
+                      color: isUser ? AppColors.primaryLight : (Theme.of(context).cardTheme.color ?? Theme.of(context).colorScheme.surface),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(

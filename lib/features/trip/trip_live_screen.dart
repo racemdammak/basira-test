@@ -66,7 +66,7 @@ class _TripLiveScreenState extends ConsumerState<TripLiveScreen> {
 
     if (origin == null || destination == null) {
       return Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Center(child: Text(l10n.invalidTripData)),
       );
     }

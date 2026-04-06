@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../data/repositories/bus_repository.dart';
 import '../data/repositories/chat_repository.dart';
 import '../data/models/station.dart';
 import '../core/services/tts_service.dart';
 import '../core/services/haptic_service.dart';
 import '../core/services/notification_service.dart';
+
+const _keyDarkMode = 'dark_mode';
 
 // Locale provider
 final localeProvider = StateProvider<Locale>((ref) {
@@ -144,3 +147,31 @@ final activeTripProvider = StateProvider<ActiveTripState>((ref) {
 final voiceAlertsEnabledProvider = StateProvider<bool>((ref) => true);
 final hapticsEnabledProvider = StateProvider<bool>((ref) => true);
 final fontSizeProvider = StateProvider<double>((ref) => 1.0); // textScaleFactor
+
+// Dark mode with persistent storage
+final darkModeProvider = StateNotifierProvider<DarkModeNotifier, bool>((ref) {
+  return DarkModeNotifier();
+});
+
+class DarkModeNotifier extends StateNotifier<bool> {
+  DarkModeNotifier() : super(false) {
+    _load();
+  }
+
+  Future<void> _load() async {
+    final prefs = await SharedPreferences.getInstance();
+    state = prefs.getBool(_keyDarkMode) ?? false;
+  }
+
+  Future<void> toggle() async {
+    state = !state;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyDarkMode, state);
+  }
+
+  Future<void> setDarkMode(bool value) async {
+    state = value;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyDarkMode, state);
+  }
+}

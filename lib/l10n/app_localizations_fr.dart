@@ -389,4 +389,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tunisian => 'Tunisian';
+
+  @override
+  String get darkMode => 'Mode sombre';
+
+  @override
+  String get darkModeSubtitle => 'Basculer vers le thème sombre';
 }

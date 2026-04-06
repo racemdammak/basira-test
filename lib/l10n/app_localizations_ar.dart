@@ -385,4 +385,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tunisian => 'Tunisian';
+
+  @override
+  String get darkMode => 'الوضع المظلم';
+
+  @override
+  String get darkModeSubtitle => 'تبديل إلى السمة الداكنة';
 }

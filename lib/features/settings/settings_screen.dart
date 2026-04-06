@@ -16,9 +16,10 @@ class SettingsScreen extends ConsumerWidget {
     final fontSize = ref.watch(fontSizeProvider);
     final voiceEnabled = ref.watch(voiceAlertsEnabledProvider);
     final hapticsEnabled = ref.watch(hapticsEnabledProvider);
+    final darkMode = ref.watch(darkModeProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(l10n.settings),
         backgroundColor: AppColors.primary,
@@ -102,6 +103,21 @@ class SettingsScreen extends ConsumerWidget {
               value: hapticsEnabled,
               onChanged: (v) {
                 ref.read(hapticsEnabledProvider.notifier).state = v;
+              },
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          // Dark Mode
+          Card(
+            child: SwitchListTile(
+              secondary: const Icon(Icons.dark_mode_outlined, color: AppColors.primaryLight),
+              title: Text(l10n.darkMode),
+              subtitle: Text(l10n.darkModeSubtitle),
+              value: darkMode,
+              onChanged: (v) {
+                ref.read(darkModeProvider.notifier).toggle();
               },
             ),
           ),

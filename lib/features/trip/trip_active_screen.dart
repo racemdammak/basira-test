@@ -155,7 +155,7 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
     final destination = allStations[trip.destinationId];
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(l10n.routePlanned),
         backgroundColor: AppColors.primary,

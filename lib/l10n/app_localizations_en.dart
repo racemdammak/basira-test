@@ -386,4 +386,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tunisian => 'Tunisian';
+
+  @override
+  String get darkMode => 'Dark Mode';
+
+  @override
+  String get darkModeSubtitle => 'Switch to dark theme';
 }
