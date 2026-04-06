@@ -136,9 +136,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get french => 'Français';
 
   @override
-  String get tunisian => 'تونسي';
-
-  @override
   String get english => 'English';
 
   @override
@@ -223,4 +220,173 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get now => 'Maintenant';
+
+  @override
+  String get busSchedules => 'Horaires des bus';
+
+  @override
+  String get nearbyStations => 'Stations proches';
+
+  @override
+  String get crowdPatterns => 'Modèles de fréquentation';
+
+  @override
+  String get aboutSoretras => 'À propos de SORETRAS';
+
+  @override
+  String get aboutSubtitle => 'Contacts, tarifs & réclamations';
+
+  @override
+  String get welcomeText => 'Bienvenue';
+
+  @override
+  String get welcomeSubtitle => 'Votre compagnon bus intelligent à Sfax';
+
+  @override
+  String get ourServices => 'Nos services';
+
+  @override
+  String get noFavoritesYet =>
+      'Pas encore de favoris\nAjoutez une étoile à un itinéraire pour le sauvegarder';
+
+  @override
+  String get noTripHistoryYet =>
+      'Pas encore d\'historique\nVos trajets récents apparaîtront ici';
+
+  @override
+  String get favorites => 'Favoris';
+
+  @override
+  String get history => 'Historique';
+
+  @override
+  String get suggestedDestinations => 'Destinations suggérées depuis';
+
+  @override
+  String get suggestedOrigins => 'Origines suggérées vers';
+
+  @override
+  String get allStations => 'Toutes les stations';
+
+  @override
+  String get typeToSearch => 'Tapez pour rechercher...';
+
+  @override
+  String get liveTracking => 'Suivi en direct';
+
+  @override
+  String get reportDelay => 'Signaler un retard';
+
+  @override
+  String get howLateIsBus => 'Quel est le retard du bus ?';
+
+  @override
+  String get submit => 'Soumettre';
+
+  @override
+  String get shareRoute => 'Partager l\'itinéraire';
+
+  @override
+  String get routeCopied => 'Itinéraire copié dans le presse-papiers !';
+
+  @override
+  String get delayReported => 'Retard signalé. Merci !';
+
+  @override
+  String get onBus => 'Dans le bus';
+
+  @override
+  String get waitingForBus => 'En attente du bus...';
+
+  @override
+  String get contact => 'Contact';
+
+  @override
+  String get workingHours => 'Horaires d\'ouverture';
+
+  @override
+  String get fares => 'Tarifs';
+
+  @override
+  String get complaintsFeedback => 'Réclamations & avis';
+
+  @override
+  String get phone => 'Téléphone';
+
+  @override
+  String get fax => 'Fax';
+
+  @override
+  String get email => 'E-mail';
+
+  @override
+  String get address => 'Adresse';
+
+  @override
+  String get standardFare => 'Tarif standard';
+
+  @override
+  String get go => 'Aller';
+
+  @override
+  String get nextDepartures => 'Prochains départs';
+
+  @override
+  String get noMoreDepartures => 'Plus de départs aujourd\'hui';
+
+  @override
+  String get stations => 'Stations';
+
+  @override
+  String get veryCrowded => 'Très fréquenté';
+
+  @override
+  String get moderate => 'Modéré';
+
+  @override
+  String get usuallyAvailable => 'Généralement disponible';
+
+  @override
+  String get rightNow => 'En ce moment';
+
+  @override
+  String get expectedCrowding =>
+      'Fréquentation prévue tout au long de la journée :';
+
+  @override
+  String get line => 'Ligne';
+
+  @override
+  String get aboutDescription =>
+      'SORETRAS (Société Régionale de Transport du Sahel) assure le transport en bus à travers Sfax et ses environs. Établie pour offrir aux citoyens un transport fiable et abordable.';
+
+  @override
+  String get workingHoursDetail =>
+      'Les bus circulent quotidiennement de 05h30 à 22h00.\nLe siège est ouvert du lundi au vendredi, de 08h00 à 17h00.';
+
+  @override
+  String get faresDetail =>
+      'Tarif standard : 0,50 TND (espèces)\nCarte d\'abonnement : 0,35 TND par trajet\nRéduction étudiante disponible avec carte valide.';
+
+  @override
+  String get complaintsDetail =>
+      'Pour déposer une réclamation ou donner votre avis :\n1. Appelez la ligne de réclamations : +216 74 240 042\n2. E-mail : reclamations@soretras.tn\n3. Rendez-vous au siège personnellement\n\nVeuillez fournir :\n- Le numéro de ligne du bus\n- L\'heure de l\'incident\n- Le nom de la station';
+
+  @override
+  String get noRouteDirect => 'Aucun itinéraire direct trouvé.';
+
+  @override
+  String get changeNeeded => 'Vous devrez peut-être changer de bus';
+
+  @override
+  String get invalidTripData => 'Données de trajet invalides';
+
+  @override
+  String get arrivingAt => 'Arrivée à';
+
+  @override
+  String get minToDestination => 'min jusqu\'à destination';
+
+  @override
+  String get tunisian => 'Tunisian';
 }

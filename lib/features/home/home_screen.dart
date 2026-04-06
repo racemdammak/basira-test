@@ -8,6 +8,11 @@ import '../map/map_screen.dart';
 import '../chatbot/chatbot_screen.dart';
 import '../settings/settings_screen.dart';
 import '../trip/station_picker_screen.dart';
+import '../trip/my_trips_screen.dart';
+import '../schedule/schedule_screen.dart';
+import '../nearby/nearby_stations_screen.dart';
+import '../crowd/crowd_patterns_screen.dart';
+import '../about/about_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -89,7 +94,7 @@ class HomeScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        localeCode == 'ar' || localeCode == 'tun' ? 'مرحباً بك' : 'Welcome to Basira',
+                        localeCode == 'ar' ? 'مرحباً بك' : 'Welcome to Basira',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 28,
@@ -100,7 +105,7 @@ class HomeScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        localeCode == 'ar' || localeCode == 'tun'
+                        localeCode == 'ar'
                             ? 'رفيقك الذكي في صفاقس'
                             : 'Your smart Sfax bus companion',
                         textAlign: TextAlign.center,
@@ -114,12 +119,12 @@ class HomeScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 36),
-                
+
                 // Section Title
                 Padding(
                   padding: const EdgeInsets.only(bottom: 18.0, left: 4.0, right: 4.0),
                   child: Text(
-                    localeCode == 'ar' || localeCode == 'tun' ? 'خدماتنا' : 'Our Services',
+                    localeCode == 'ar' ? 'خدماتنا' : 'Our Services',
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w800,
@@ -146,10 +151,75 @@ class HomeScreen extends ConsumerWidget {
                 ),
                 _buildActionCard(
                   context: context,
+                  icon: Icons.schedule,
+                  title: l10n.busSchedules,
+                  onTap: () {
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const ScheduleScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _buildActionCard(
+                  context: context,
+                  icon: Icons.near_me,
+                  title: l10n.nearbyStations,
+                  onTap: () {
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const NearbyStationsScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _buildActionCard(
+                  context: context,
+                  icon: Icons.track_changes,
+                  title: 'My Trips',
+                  onTap: () {
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const MyTripsScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _buildActionCard(
+                  context: context,
+                  icon: Icons.people_outline,
+                  title: l10n.crowdPatterns,
+                  onTap: () {
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const CrowdPatternsScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _buildActionCard(
+                  context: context,
                   icon: Icons.chat_bubble_rounded,
                   title: l10n.chatbot,
                   onTap: () {
                     Navigator.of(context).push(_chatbotRoute(context));
+                  },
+                ),
+                _buildActionCard(
+                  context: context,
+                  icon: Icons.info_outline,
+                  title: l10n.aboutSoretras,
+                  onTap: () {
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const AboutScreen(),
+                      ),
+                    );
                   },
                 ),
               ],

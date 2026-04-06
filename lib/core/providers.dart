@@ -14,9 +14,7 @@ final localeProvider = StateProvider<Locale>((ref) {
 
 // Language code helper
 final languageCodeProvider = Provider<String>((ref) {
-  final locale = ref.watch(localeProvider);
-  final code = locale.languageCode;
-  return code == 'tun' ? 'ar' : code;
+  return ref.watch(localeProvider).languageCode;
 });
 
 final localeStringProvider = Provider<String>((ref) {
@@ -29,6 +27,7 @@ final ttsLocaleProvider = Provider<String>((ref) {
   switch (code) {
     case 'fr': return 'fr-FR';
     case 'ar': return 'ar-SA';
+    case 'tun': return 'ar-TN';
     default: return 'en-US';
   }
 });

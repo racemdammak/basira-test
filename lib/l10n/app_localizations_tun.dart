@@ -135,9 +135,6 @@ class AppLocalizationsTun extends AppLocalizations {
   String get french => 'Français';
 
   @override
-  String get tunisian => 'تونسي';
-
-  @override
   String get english => 'English';
 
   @override
@@ -192,7 +189,7 @@ class AppLocalizationsTun extends AppLocalizations {
   String get busArrived => 'كارك وسّلت!';
 
   @override
-  String get destinationSoonText => 'توصل لوجهتك في 5 دقايق. حضّر روحك!';
+  String get destinationSoonText => 'توصّل لوجهتك في 5 دقايق. حضّر روحك!';
 
   @override
   String get destinationArrivedText => 'توسّلت. شكراً تستعمل بصيرة!';
@@ -220,4 +217,171 @@ class AppLocalizationsTun extends AppLocalizations {
 
   @override
   String get now => 'التواتة';
+
+  @override
+  String get busSchedules => 'مواعيد الكارات';
+
+  @override
+  String get nearbyStations => 'محطات قريبة';
+
+  @override
+  String get crowdPatterns => 'كثرة الناس';
+
+  @override
+  String get aboutSoretras => 'حول سورتاس';
+
+  @override
+  String get aboutSubtitle => 'معلومات الاتصال والأسعار والشكاوى';
+
+  @override
+  String get welcomeText => 'مرحباً بك';
+
+  @override
+  String get welcomeSubtitle => 'رفيقك الذكي في صفاقس';
+
+  @override
+  String get ourServices => 'خدماتنا';
+
+  @override
+  String get noFavoritesYet => 'ما عندكش مفضّلات بعد\nعلّم على مسار باش تهنا';
+
+  @override
+  String get noTripHistoryYet =>
+      'ما عندكش سجل رحلات بعد\nرحلاتك الأخيرة باش تبان هكا';
+
+  @override
+  String get favorites => 'المفضّلات';
+
+  @override
+  String get history => 'السجّل';
+
+  @override
+  String get suggestedDestinations => 'وجهات مقترحة من';
+
+  @override
+  String get suggestedOrigins => 'بلايص انطلاق مقترحة لـ';
+
+  @override
+  String get allStations => 'كل المحطات';
+
+  @override
+  String get typeToSearch => 'اكتب باش تدوّر...';
+
+  @override
+  String get liveTracking => 'تتبع مباشر';
+
+  @override
+  String get reportDelay => 'أبلاغ على تأخير';
+
+  @override
+  String get howLateIsBus => 'قداش تأخر الكار؟';
+
+  @override
+  String get submit => 'أرسل';
+
+  @override
+  String get shareRoute => 'شارك المسار';
+
+  @override
+  String get routeCopied => 'المسار تتنسّخ! تمّ.';
+
+  @override
+  String get delayReported => 'أبلغت بالتأخير. شكراً!';
+
+  @override
+  String get onBus => 'في الكار';
+
+  @override
+  String get waitingForBus => 'تستنى الكار...';
+
+  @override
+  String get contact => 'معلومات الاتصال';
+
+  @override
+  String get workingHours => 'وقت العمل';
+
+  @override
+  String get fares => 'الأثمنة';
+
+  @override
+  String get complaintsFeedback => 'شكايات وملاحظات';
+
+  @override
+  String get phone => 'هاتف';
+
+  @override
+  String get fax => 'فاكس';
+
+  @override
+  String get email => 'بريد إلكتروني';
+
+  @override
+  String get address => 'عنوان';
+
+  @override
+  String get standardFare => 'التذكرة العادية';
+
+  @override
+  String get go => 'انطلق';
+
+  @override
+  String get nextDepartures => 'المغادرات الجاية';
+
+  @override
+  String get noMoreDepartures => 'ما عادش مغادرة اليوم';
+
+  @override
+  String get stations => 'المحطات';
+
+  @override
+  String get veryCrowded => 'معمّر بزاف';
+
+  @override
+  String get moderate => 'عادي';
+
+  @override
+  String get usuallyAvailable => 'متاح عادةً';
+
+  @override
+  String get rightNow => 'التواتة';
+
+  @override
+  String get expectedCrowding => 'الازدحام المتوقّع اليوم:';
+
+  @override
+  String get line => 'خط';
+
+  @override
+  String get aboutDescription =>
+      'سورتاس (الشركة الجهوية للنقل بالساحل) توصل النقل بالحافلات في صفاقس والجهة. تأسيس باش يخدم المواطنين بوسيلة نقل موثوقة وبرسوم معقولة.';
+
+  @override
+  String get workingHoursDetail =>
+      'الكارات تخدم كل يوم من 05:30 حتى 22:00.\nالمقر الإداري مفتوح من الإثنين للجمعة، من 08:00 حتى 17:00.';
+
+  @override
+  String get faresDetail =>
+      'التذكرة العادية: 0.50 دينار (كاش)\nبطاقة الاشتراك: 0.35 دينار للرحلة\nتخفيض للطلبة موجود ببطاقة صالحة.';
+
+  @override
+  String get complaintsDetail =>
+      'باش تشكي أو تعطي ملاحظة:\n1. اتصل بخط الشكايات: 042 240 74 216+\n2. البريد الإلكتروني: reclamations@soretras.tn\n3. روح للمقر الإداري شخصياً\n\nفضّل تعطي:\n- رقم خط الكار\n- وقت الحادثة\n- اسم المحطة';
+
+  @override
+  String get noRouteDirect => 'ما لقيتش مسار مباشر.';
+
+  @override
+  String get changeNeeded => 'تحتاج تبدّل الكار';
+
+  @override
+  String get invalidTripData => 'بيانات الرحلة ما تصحّش';
+
+  @override
+  String get arrivingAt => 'قاعدين نوصلو لـ';
+
+  @override
+  String get minToDestination => 'دقايق للوجهة';
+
+  @override
+  String get tunisian => 'تونسي';
 }

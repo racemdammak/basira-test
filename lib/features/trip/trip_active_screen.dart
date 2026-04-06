@@ -1,11 +1,17 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../l10n/app_localizations.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/providers.dart';
 import '../../core/services/haptic_service.dart';
+import '../../data/mock/buses_mock.dart';
+import '../../data/mock/stations_mock.dart';
+import '../../data/services/storage_service.dart';
+import '../../data/models/favorite_route.dart';
+import 'trip_live_screen.dart';
 
 class TripActiveScreen extends ConsumerStatefulWidget {
   const TripActiveScreen({super.key});
@@ -28,7 +34,6 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
   @override
   void dispose() {
     _tripTimer?.cancel();
-    // Clear active trip
     ref.read(activeTripProvider.notifier).state = const ActiveTripState();
     ref.read(notificationServiceProvider).cancelAll();
     super.dispose();
@@ -36,90 +41,102 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
 
   void _checkTripEvents(Timer timer) {
     if (!mounted) return;
-
     _elapsedSeconds += 5;
     final trip = ref.read(activeTripProvider);
     if (!trip.isActive) return;
 
-    // Simulate trip progression
-    // At ~60s: approaching
-    // At ~120s: arrived
-    // At ~180s: destination soon
-    // At ~240s: destination arrived
     if (_elapsedSeconds == 60 && !_isBoarded) {
-      _triggerNotification(HapticPattern.busApproaching,
-          titleKey: 'busApproaching', localeKey: 'busApproaching');
+      _triggerNotification(HapticPattern.busApproaching, localeKey: 'busApproaching');
     } else if (_elapsedSeconds == 120 && !_isBoarded) {
-      _triggerNotification(HapticPattern.busArrived,
-          titleKey: 'busArrived', localeKey: 'busArrived');
+      _triggerNotification(HapticPattern.busArrived, localeKey: 'busArrived');
     }
   }
 
-  void _triggerNotification(HapticPattern pattern,
-      {required String titleKey, required String localeKey}) {
+  void _triggerNotification(HapticPattern pattern, {required String localeKey}) {
     final notifications = ref.read(notificationServiceProvider);
     final l10n = AppLocalizations.of(context);
 
     String title = '';
-    String body = '';
     switch (localeKey) {
-      case 'busApproaching':
-        title = l10n.busApproaching;
-        body = '';
-        break;
-      case 'busArrived':
-        title = l10n.busArrived;
-        body = '';
-        break;
-      case 'destinationSoon':
-        title = l10n.destinationSoon;
-        body = '';
-        break;
-      case 'destinationArrived':
-        title = l10n.youHaveArrived;
-        body = '';
-        break;
+      case 'busApproaching': title = l10n.busApproaching; break;
+      case 'busArrived': title = l10n.busArrived; break;
+      case 'destinationSoon': title = l10n.destinationSoon; break;
+      case 'destinationArrived': title = l10n.youHaveArrived; break;
     }
 
     if (ref.read(voiceAlertsEnabledProvider)) {
-      notifications.notify(
-          title: title, body: body, haptic: pattern);
+      notifications.notify(title: title, body: '', haptic: pattern);
     } else {
-      // Just show notification without voice/haptic
-      notifications.notify(
-          title: title, body: body, haptic: HapticPattern.confirmation);
+      notifications.notify(title: title, body: '', haptic: HapticPattern.confirmation);
     }
   }
 
   Future<void> _startTrip() async {
-    setState(() {
-      _isBoarded = true;
-    });
-    ref.read(activeTripProvider.notifier).state =
-        ref.read(activeTripProvider).copyWith(
-              isBoarded: true,
-              startTime: DateTime.now(),
-            );
-
-    _triggerNotification(HapticPattern.confirmation,
-        titleKey: 'startTrip', localeKey: 'busApproaching');
-
-    // Update ref
-    ref.read(activeTripProvider.notifier).state =
-        ref.read(activeTripProvider).copyWith(isBoarded: true);
+    setState(() => _isBoarded = true);
+    ref.read(activeTripProvider.notifier).state = ref.read(activeTripProvider).copyWith(
+      isBoarded: true,
+      startTime: DateTime.now(),
+    );
+    _triggerNotification(HapticPattern.confirmation, localeKey: 'busApproaching');
   }
 
   Future<void> _reportCrowd() async {
-    final repo = ref.read(busRepositoryProvider);
     final trip = ref.read(activeTripProvider);
+    await ref.read(busRepositoryProvider).reportCrowd(trip.busId ?? 'unknown', 76);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context).crowdReportSent)),
+      );
+    }
+  }
 
-    // Simulate: current bus is 95% full
-    await repo.reportCrowd(trip.busId ?? 'unknown', 76);
+  Future<void> _reportDelay() async {
+    final minute = await _showDelayDialog(context);
+    if (minute != null && mounted) {
+      final trip = ref.read(activeTripProvider);
+      ref.read(storageServiceProvider).addDelayReport(DelayReport(
+        busLine: _getBusLine(trip) ?? 'unknown',
+        stationId: trip.originId ?? '',
+        delayMinutes: minute,
+        timestamp: DateTime.now(),
+      ));
+      final l10n = AppLocalizations.of(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.delayReported)),
+      );
+    }
+  }
 
+  Future<int?> _showDelayDialog(BuildContext context) {
+    return showDialog<int>(context: context, builder: (_) => _DelayDialog());
+  }
+
+  String? _getBusLine(ActiveTripState trip) {
+    if (trip.originId == null || trip.destinationId == null) return null;
+    for (final line in allBusLines) {
+      final oi = line.stationIds.indexOf(trip.originId!);
+      final di = line.stationIds.indexOf(trip.destinationId!);
+      if (oi != -1 && di != -1 && oi < di) return line.lineNumber;
+    }
+    return null;
+  }
+
+  Future<void> _shareTrip() async {
+    final trip = ref.read(activeTripProvider);
+    final code = ref.read(localeStringProvider);
+    final origin = allStations[trip.originId];
+    final destination = allStations[trip.destinationId];
+    if (origin == null || destination == null) return;
+
+    final message = 'Basira Route: ${origin.nameForLocale(code)} → ${destination.nameForLocale(code)}\n'
+        'Bus line: ${_getBusLine(trip) ?? 'N/A'}\n'
+        'Check live schedules at Basira app!';
+
+    await Clipboard.setData(ClipboardData(text: message));
     if (mounted) {
       final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.crowdReportSent)),
+        SnackBar(content: Text(l10n.routeCopied)),
       );
     }
   }
@@ -127,15 +144,15 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
   Future<void> _endTrip() async {
     ref.read(activeTripProvider.notifier).state = const ActiveTripState();
     ref.read(notificationServiceProvider).cancelAll();
-    if (mounted) {
-      Navigator.of(context).pop();
-    }
+    if (mounted) Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    ref.watch(activeTripProvider);
+    final trip = ref.watch(activeTripProvider);
+    final origin = allStations[trip.originId];
+    final destination = allStations[trip.destinationId];
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -143,12 +160,83 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
         title: Text(l10n.routePlanned),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share, color: Colors.white),
+            onPressed: _shareTrip,
+            tooltip: l10n.shareRoute,
+          ),
+        ],
       ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
+              // Route summary
+              if (origin != null && destination != null)
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Column(
+                          children: [
+                            const Icon(Icons.circle, size: 12, color: Colors.green),
+                            Container(width: 2, height: 20, color: Colors.grey),
+                            const Icon(Icons.flag, size: 12, color: Colors.red),
+                          ],
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                origin.nameForLocale(ref.read(localeStringProvider)),
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                destination.nameForLocale(ref.read(localeStringProvider)),
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+              const SizedBox(height: 12),
+
+              // Live tracking button (when boarded)
+              if (_isBoarded)
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => TripLiveScreen(
+                            originId: trip.originId!,
+                            destinationId: trip.destinationId!,
+                            busLine: _getBusLine(trip),
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.location_on),
+                    label: Text(l10n.liveTracking),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                  ),
+                ),
+
+              const SizedBox(height: 12),
+
               // Trip status
               Card(
                 child: Padding(
@@ -162,9 +250,7 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        _isBoarded
-                            ? '🟢 On bus'
-                            : 'Waiting for bus...',
+                        _isBoarded ? l10n.onBus : l10n.waitingForBus,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -174,13 +260,10 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
                   ),
                 ),
               ),
+
               const SizedBox(height: 16),
 
-              if (_isBoarded) ...[
-                // Large "I'm on the bus" button
-            ],
-
-            // Big action buttons
+              // Action buttons
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
@@ -193,22 +276,31 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.available,
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 32, vertical: 18),
+                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
                             minimumSize: const Size(double.infinity, 60),
                           ),
                         ),
-                      const SizedBox(height: 16),
+                      if (!_isBoarded) const SizedBox(height: 16),
                       ElevatedButton.icon(
                         onPressed: _reportCrowd,
                         icon: const Icon(Icons.report, size: 28),
-                        label: Text(l10n.busFull,
-                            style: const TextStyle(fontSize: 18)),
+                        label: Text(l10n.busFull, style: const TextStyle(fontSize: 18)),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.full,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 32, vertical: 18),
+                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
+                          minimumSize: const Size(double.infinity, 60),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton.icon(
+                        onPressed: _reportDelay,
+                        icon: const Icon(Icons.access_time, size: 28),
+                        label: Text(l10n.reportDelay, style: const TextStyle(fontSize: 18)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
                           minimumSize: const Size(double.infinity, 60),
                         ),
                       ),
@@ -216,24 +308,65 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
                       ElevatedButton.icon(
                         onPressed: _endTrip,
                         icon: const Icon(Icons.close, size: 28),
-                        label:
-                            Text(l10n.endTrip, style: const TextStyle(fontSize: 18)),
+                        label: Text(l10n.endTrip, style: const TextStyle(fontSize: 18)),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryLight,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 32, vertical: 18),
+                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
                           minimumSize: const Size(double.infinity, 60),
                         ),
                       ),
                     ],
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _DelayDialog extends StatefulWidget {
+  @override
+  State<_DelayDialog> createState() => _DelayDialogState();
+}
+
+class _DelayDialogState extends State<_DelayDialog> {
+  int _selected = 5;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return AlertDialog(
+      title: Text(l10n.reportDelay),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(l10n.howLateIsBus),
+          const SizedBox(height: 12),
+          DropdownButton<int>(
+            value: _selected,
+            items: [5, 10, 15, 20, 30].map((m) {
+              return DropdownMenuItem(value: m, child: Text('$m ${l10n.minutes}'));
+            }).toList(),
+            onChanged: (v) {
+              if (v != null) setState(() => _selected = v);
+            },
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.cancel),
+        ),
+        ElevatedButton(
+          onPressed: () => Navigator.pop(context, _selected),
+          child: Text(l10n.submit),
+        ),
+      ],
     );
   }
 }

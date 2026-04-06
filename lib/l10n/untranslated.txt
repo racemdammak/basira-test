@@ -1,1 +1,9 @@
-{}
+{
+  "ar": [
+    "tunisian"
+  ],
+
+  "fr": [
+    "tunisian"
+  ]
+}
