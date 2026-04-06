@@ -10,7 +10,11 @@ import 'features/home/home_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await dotenv.load(fileName: '.env');
+  try {
+    await dotenv.load(fileName: '.env');
+  } catch (_) {
+    // Fallback if .env file is missing or malformed
+  }
 
   // Lock to portrait
   await SystemChrome.setPreferredOrientations([

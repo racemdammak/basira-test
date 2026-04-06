@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter doctor:*)",
+      "Bash(flutter run:*)",
+      "Bash(ls -la /d/basira/lib/l10n/*.arb)",
+      "Bash(ls:*)",
+      "Bash(flutter analyze:*)"
+    ]
+  }
+}
