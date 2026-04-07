@@ -99,8 +99,10 @@ class _TripCardState extends ConsumerState<_TripCard> {
     );
     final firstEstimate = estimates.isNotEmpty ? estimates.first : null;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 14),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -110,45 +112,96 @@ class _TripCardState extends ConsumerState<_TripCard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        trip.origin.nameForLocale(widget.code),
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      const Text('\u2193', textAlign: TextAlign.center),
-                      Text(
-                        trip.destination.nameForLocale(widget.code),
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                    ],
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 10,
+                          height: 10,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF335836),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        SizedBox(
+                          width: 160,
+                          child: Text(
+                            trip.origin.nameForLocale(widget.code),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 14),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 4),
+                      child: Icon(Icons.arrow_downward_rounded, size: 16, color: AppColors.primaryLight),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Container(
+                          width: 10,
+                          height: 10,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFD36868),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        SizedBox(
+                          width: 160,
+                          child: Text(
+                            trip.destination.nameForLocale(widget.code),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 14),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                       decoration: BoxDecoration(
-                        color: AppColors.accent.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(8),
+                        color: isDark ? const Color(0xFF2A4A30) : const Color(0xFFE8F3E5),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Text(
-                        '$minutes min',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.timer_outlined, size: 16, color: AppColors.primary),
+                          const SizedBox(width: 4),
+                          Text(
+                            '$minutes min',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     if (firstEstimate != null)
                       Padding(
-                        padding: const EdgeInsets.only(top: 4),
+                        padding: const EdgeInsets.only(top: 6),
                         child: Text(
                           firstEstimate.formattedFare,
                           style: TextStyle(
                             fontSize: 12,
-                            color: Theme.of(context).textTheme.bodySmall?.color,
+                            color: isDark ? const Color(0xFFB0C4AE) : AppColors.textSecondary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -157,46 +210,60 @@ class _TripCardState extends ConsumerState<_TripCard> {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
+            // Divider
+            Container(
+              height: 1,
+              color: isDark ? const Color(0xFF2A3A2E) : const Color(0xFFE8E0C8),
+            ),
+            const SizedBox(height: 10),
             // Sections
             for (final section in trip.sections)
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Row(
                   children: [
+                    Icon(Icons.directions_bus_rounded, size: 18, color: AppColors.primaryLight),
+                    const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
-                        borderRadius: BorderRadius.circular(6),
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         'L${section.busLineNumber}',
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
+                          fontSize: 13,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Text('${section.duration.inMinutes}min'),
+                    const SizedBox(width: 10),
+                    Text(
+                      '${section.duration.inMinutes} min',
+                      style: TextStyle(
+                        color: isDark ? const Color(0xFFB0C4AE) : AppColors.textSecondary,
+                      ),
+                    ),
                   ],
                 ),
               ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             // Favorite + Take This Bus row
             Row(
               children: [
                 Expanded(
                   child: ElevatedButton.icon(
+                    icon: const Icon(Icons.directions_bus_rounded, size: 20),
+                    label: Text(l10n.takeThisBus),
                     onPressed: () {
                       ref.read(activeTripProvider.notifier).state =
                           ref.read(activeTripProvider).copyWith(
                                 originId: trip.origin.id,
                                 destinationId: trip.destination.id,
                               );
-                      // Add to history
                       storage.addToHistory(TripHistoryEntry(
                         originId: trip.origin.id,
                         destinationId: trip.destination.id,
@@ -209,36 +276,46 @@ class _TripCardState extends ConsumerState<_TripCard> {
                         ),
                       );
                     },
-                    icon: const Icon(Icons.directions_bus),
-                    label: Text(l10n.takeThisBus),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
-                IconButton(
-                  onPressed: () {
-                    final favId = '${trip.origin.id}_${trip.destination.id}';
-                    if (isFavorited) {
-                      ref.read(storageServiceProvider).removeFavorite(favId);
-                    } else {
-                      ref.read(storageServiceProvider).addFavorite(
-                        FavoriteRoute(
-                          id: favId,
-                          originId: trip.origin.id,
-                          destinationId: trip.destination.id,
-                          createdAt: DateTime.now(),
-                        ),
-                      );
-                    }
-                    if (mounted) {
-                      ref.read(favoritesProvider.notifier).state =
-                          storage.getFavorites();
-                      setState(() => isFavorited = !isFavorited);
-                    }
-                  },
-                  icon: Icon(isFavorited ? Icons.star : Icons.star_border),
+                const SizedBox(width: 10),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: isFavorited ? AppColors.primary : (isDark ? const Color(0xFF3A5040) : Colors.grey.shade300),
+                      width: 1.5,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      final favId = '${trip.origin.id}_${trip.destination.id}';
+                      if (isFavorited) {
+                        ref.read(storageServiceProvider).removeFavorite(favId);
+                      } else {
+                        ref.read(storageServiceProvider).addFavorite(
+                          FavoriteRoute(
+                            id: favId,
+                            originId: trip.origin.id,
+                            destinationId: trip.destination.id,
+                            createdAt: DateTime.now(),
+                          ),
+                        );
+                      }
+                      if (mounted) {
+                        ref.read(favoritesProvider.notifier).state =
+                            storage.getFavorites();
+                        setState(() => isFavorited = !isFavorited);
+                      }
+                    },
+                    icon: Icon(
+                      isFavorited ? Icons.star_rounded : Icons.star_border_rounded,
+                      color: isFavorited ? AppColors.primary : null,
+                    ),
+                  ),
                 ),
               ],
             ),

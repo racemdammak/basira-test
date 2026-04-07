@@ -85,12 +85,19 @@ class HomeScreen extends ConsumerWidget {
                   child: Column(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.18),
                           shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white.withOpacity(0.25), width: 2),
                         ),
-                        child: const Icon(Icons.directions_bus_rounded, size: 56, color: Colors.white),
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/icons/icon.png',
+                            width: 56,
+                            height: 56,
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 20),
                       Text(

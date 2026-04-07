@@ -159,23 +159,56 @@ class _StationPickerScreenState extends ConsumerState<StationPickerScreen> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Theme.of(context).cardTheme.color ?? Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(color: AppColors.primaryLight.withOpacity(0.3)),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withOpacity(0.05),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: const TextStyle(fontSize: 16)),
-            if (station != null)
-              Expanded(
-                child: Text(
-                  station.nameForLocale(ref.read(localeStringProvider)),
-                  textAlign: TextAlign.end,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              )
-            else
-              const Icon(Icons.chevron_right, color: Colors.grey),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppColors.accent.withOpacity(0.4),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                station != null ? Icons.location_on_rounded : Icons.location_on_outlined,
+                size: 22,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    station != null
+                        ? station.nameForLocale(ref.read(localeStringProvider))
+                        : 'Tap to select',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: station != null ? FontWeight.w600 : FontWeight.normal,
+                      color: station != null ? AppColors.textPrimary : AppColors.textSecondary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.navigate_next_rounded, color: AppColors.primaryLight),
           ],
         ),
       ),
@@ -424,13 +457,23 @@ class _StationSearchSheetState extends ConsumerState<_StationSearchSheet> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
                     hintText: l10n.searchStation,
-                    prefixIcon: const Icon(Icons.search),
-                    border: const OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.search_rounded, color: AppColors.primary),
+                    filled: true,
+                    fillColor: const Color(0xFFF5F0D6),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(color: AppColors.accent.withOpacity(0.5)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   ),
                   onChanged: _search,
                   autofocus: true,

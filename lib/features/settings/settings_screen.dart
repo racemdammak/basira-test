@@ -17,13 +17,12 @@ class SettingsScreen extends ConsumerWidget {
     final voiceEnabled = ref.watch(voiceAlertsEnabledProvider);
     final hapticsEnabled = ref.watch(hapticsEnabledProvider);
     final darkMode = ref.watch(darkModeProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(l10n.settings),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -35,24 +34,18 @@ class SettingsScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.language, color: AppColors.primaryLight),
-                      const SizedBox(width: 12),
-                      Text(
-                        l10n.language,
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                    ],
+                  _SectionHeader(
+                    icon: Icons.language_rounded,
+                    title: l10n.language,
                   ),
                   const SizedBox(height: 12),
                   Wrap(
                     spacing: 8,
+                    runSpacing: 8,
                     children: [
-                      _langChip(l10n.english, 'en', currentLocale, ref),
-                      _langChip(l10n.arabic, 'ar', currentLocale, ref),
-                      _langChip(l10n.french, 'fr', currentLocale, ref),
+                      _langChip(l10n.english, 'en', currentLocale, ref, isDark),
+                      _langChip(l10n.arabic, 'ar', currentLocale, ref, isDark),
+                      _langChip(l10n.french, 'fr', currentLocale, ref, isDark),
                     ],
                   ),
                 ],
@@ -69,22 +62,15 @@ class SettingsScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.volume_up, color: AppColors.primaryLight),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          l10n.voiceSettings,
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ],
+                  _SectionHeader(
+                    icon: Icons.record_voice_over_rounded,
+                    title: l10n.voiceSettings,
                   ),
+                  const SizedBox(height: 8),
                   SwitchListTile(
                     title: Text(l10n.enableVoiceAlerts),
                     value: voiceEnabled,
+                    activeColor: AppColors.primary,
                     onChanged: (v) {
                       ref.read(voiceAlertsEnabledProvider.notifier).state = v;
                     },
@@ -98,12 +84,28 @@ class SettingsScreen extends ConsumerWidget {
 
           // Haptics
           Card(
-            child: SwitchListTile(
-              title: Text(l10n.enableHaptics),
-              value: hapticsEnabled,
-              onChanged: (v) {
-                ref.read(hapticsEnabledProvider.notifier).state = v;
-              },
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  _IconCircle(icon: Icons.vibration_rounded),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      l10n.enableHaptics,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  Switch(
+                    value: hapticsEnabled,
+                    activeColor: AppColors.primary,
+                    onChanged: (v) {
+                      ref.read(hapticsEnabledProvider.notifier).state = v;
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
 
@@ -112,9 +114,11 @@ class SettingsScreen extends ConsumerWidget {
           // Dark Mode
           Card(
             child: SwitchListTile(
-              secondary: const Icon(Icons.dark_mode_outlined, color: AppColors.primaryLight),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              secondary: _IconCircle(icon: isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded),
               title: Text(l10n.darkMode),
               subtitle: Text(l10n.darkModeSubtitle),
+              activeColor: AppColors.primary,
               value: darkMode,
               onChanged: (v) {
                 ref.read(darkModeProvider.notifier).toggle();
@@ -131,35 +135,39 @@ class SettingsScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  _SectionHeader(
+                    icon: Icons.text_fields_rounded,
+                    title: l10n.fontSize,
+                  ),
+                  const SizedBox(height: 12),
                   Row(
                     children: [
-                      const Icon(Icons.text_fields,
-                          color: AppColors.primaryLight),
-                      const SizedBox(width: 12),
-                      Text(
-                        l10n.fontSize,
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                      const Icon(Icons.text_decrease_outlined, size: 18, color: AppColors.primaryLight),
+                      Expanded(
+                        child: Slider(
+                          min: 0.8,
+                          max: 1.4,
+                          divisions: 3,
+                          value: fontSize,
+                          label: _fontSizeLabel(l10n, fontSize),
+                          activeColor: AppColors.primary,
+                          onChanged: (v) {
+                            ref.read(fontSizeProvider.notifier).state = v;
+                          },
+                        ),
                       ),
+                      const Icon(Icons.text_increase_outlined, size: 18, color: AppColors.primaryLight),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Slider(
-                    min: 0.8,
-                    max: 1.4,
-                    divisions: 3,
-                    value: fontSize,
-                    label: _fontSizeLabel(l10n, fontSize),
-                    onChanged: (v) {
-                      ref.read(fontSizeProvider.notifier).state = v;
-                    },
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(l10n.small),
-                      Text(l10n.large),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(l10n.small, style: const TextStyle(fontSize: 12)),
+                        Text(l10n.large, style: const TextStyle(fontSize: 12)),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -171,9 +179,11 @@ class SettingsScreen extends ConsumerWidget {
           // About SORETRAS
           Card(
             child: ListTile(
-              leading: const Icon(Icons.info_outline, color: AppColors.primary),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              leading: _IconCircle(icon: Icons.info_outline_rounded),
               title: Text(l10n.aboutSoretras),
               subtitle: Text(l10n.aboutSubtitle),
+              trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.primaryLight),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const AboutScreen()),
@@ -181,6 +191,8 @@ class SettingsScreen extends ConsumerWidget {
               },
             ),
           ),
+
+          const SizedBox(height: 24),
         ],
       ),
     );
@@ -193,16 +205,63 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   Widget _langChip(
-      String label, String code, Locale current, WidgetRef ref) {
+      String label, String code, Locale current, WidgetRef ref, bool isDark) {
     final isSelected = current.languageCode == code;
     return FilterChip(
-      label: Text(label),
       selected: isSelected,
+      label: Text(label),
+      showCheckmark: false,
+      selectedColor: AppColors.primary.withOpacity(0.15),
+      checkmarkColor: AppColors.primary,
+      side: BorderSide(
+        color: isSelected ? AppColors.primary : (isDark ? const Color(0xFF3A5040) : AppColors.accent.withOpacity(0.5)),
+        width: isSelected ? 1.5 : 1,
+      ),
       onSelected: (selected) {
         if (selected) {
           ref.read(localeProvider.notifier).state = Locale(code);
         }
       },
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  final IconData icon;
+  final String title;
+
+  const _SectionHeader({required this.icon, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        _IconCircle(icon: icon),
+        const SizedBox(width: 12),
+        Text(
+          title,
+          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+        ),
+      ],
+    );
+  }
+}
+
+class _IconCircle extends StatelessWidget {
+  final IconData icon;
+
+  const _IconCircle({required this.icon});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF2A4A30) : const Color(0xFFE8F3E5),
+        shape: BoxShape.circle,
+      ),
+      child: Icon(icon, size: 20, color: AppColors.primary),
     );
   }
 }

@@ -42,16 +42,15 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(l10n.myTrips),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
         bottom: TabBar(
           controller: _tabController,
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white70,
           indicatorColor: Colors.white,
+          indicatorWeight: 3,
           tabs: [
-            Tab(icon: Icon(Icons.star), text: l10n.favorites),
-            Tab(icon: Icon(Icons.history), text: l10n.history),
+            Tab(icon: Icon(Icons.star_rounded), text: l10n.favorites),
+            Tab(icon: Icon(Icons.history_rounded), text: l10n.history),
           ],
         ),
       ),

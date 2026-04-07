@@ -55,28 +55,11 @@ class _BusLineCardState extends State<_BusLineCard> {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
           ListTile(
             onTap: () => setState(() => _expanded = !_expanded),
-            leading: Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(22),
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                line.lineNumber,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-            ),
+            leading: _LineBadge(lineNumber: line.lineNumber),
             title: Text(
               '${line.directionFrom} \u2192 ${line.directionTo}',
               style: const TextStyle(fontWeight: FontWeight.w600),
@@ -85,7 +68,7 @@ class _BusLineCardState extends State<_BusLineCard> {
               'Every ${line.intervalMinutes}min \u00B7 ${line.startHour}:${line.startMinute.toString().padLeft(2, '0')} \u2013 ${line.endHour}:${line.endMinute.toString().padLeft(2, '0')}',
               style: const TextStyle(fontSize: 13),
             ),
-            trailing: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
+            trailing: Icon(_expanded ? Icons.expand_less_rounded : Icons.expand_more_rounded),
           ),
           if (_expanded) ...[
             const Divider(height: 1),
@@ -108,19 +91,28 @@ class _BusLineCardState extends State<_BusLineCard> {
     }
 
     return Padding(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Next Departures',
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+          Row(
+            children: [
+              Icon(Icons.schedule_rounded, size: 16, color: AppColors.primary),
+              const SizedBox(width: 6),
+              const Text(
+                'Next Departures',
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           if (next.isEmpty)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              child: Text('No more departures today'),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Text(
+                'No more departures today',
+                style: TextStyle(color: AppColors.textSecondary),
+              ),
             )
           else
             Wrap(
@@ -128,17 +120,28 @@ class _BusLineCardState extends State<_BusLineCard> {
               runSpacing: 8,
               children: next.map((dep) {
                 final mins = dep.difference(now).inMinutes;
-                return Chip(
-                  label: Text(
-                    '${formatTime(dep)} ($mins min)',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: mins <= 5 ? Colors.green : null,
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: mins <= 5
+                        ? const Color(0xFFE8F3E5)
+                        : const Color(0xFFF5F0D6),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: mins <= 5
+                          ? const Color(0xFFABCBA2)
+                          : const Color(0xFFE8E0C8),
+                      width: 1,
                     ),
                   ),
-                  backgroundColor: mins <= 5
-                      ? Colors.green.withOpacity(0.1)
-                      : null,
+                  child: Text(
+                    '${formatTime(dep)} ($mins min)',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                      color: mins <= 5 ? const Color(0xFF335836) : AppColors.textPrimary,
+                    ),
+                  ),
                 );
               }).toList(),
             ),
@@ -152,46 +155,46 @@ class _BusLineCardState extends State<_BusLineCard> {
     final code = widget.code;
 
     return Padding(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Stations',
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+          Row(
+            children: [
+              Icon(Icons.location_on_outlined, size: 16, color: AppColors.primary),
+              const SizedBox(width: 6),
+              const Text(
+                'Stations',
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+              ),
+            ],
           ),
+          const SizedBox(height: 10),
           for (var i = 0; i < line.stationIds.length; i++) ...[
             if (i > 0)
               Align(
                 alignment: Alignment.centerLeft,
                 child: Container(
-                  height: 12,
+                  height: 14,
                   width: 2,
-                  color: AppColors.primary.withOpacity(0.3),
-                  margin: const EdgeInsets.only(left: 11.5),
+                  color: AppColors.primary.withOpacity(0.2),
+                  margin: const EdgeInsets.only(left: 11),
                 ),
               ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
+              padding: const EdgeInsets.symmetric(vertical: 3),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
-                    i == 0
-                        ? Icons.circle
-                        : i == line.stationIds.length - 1
-                            ? Icons.flag
-                            : Icons.radio_button_unchecked,
-                    size: 24,
-                    color: i == 0
-                        ? Colors.green
-                        : i == line.stationIds.length - 1
-                            ? Colors.red
-                            : AppColors.primary,
+                  _StationDot(
+                    isFirst: i == 0,
+                    isLast: i == line.stationIds.length - 1,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       allStations[line.stationIds[i]]?.nameForLocale(code) ?? '?',
+                      style: const TextStyle(fontSize: 14),
                     ),
                   ),
                 ],
@@ -200,6 +203,77 @@ class _BusLineCardState extends State<_BusLineCard> {
           ],
         ],
       ),
+    );
+  }
+}
+
+class _LineBadge extends StatelessWidget {
+  final String lineNumber;
+
+  const _LineBadge({required this.lineNumber});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 44,
+      height: 44,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [AppColors.primary, AppColors.primaryLight],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        lineNumber,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+        ),
+      ),
+    );
+  }
+}
+
+class _StationDot extends StatelessWidget {
+  final bool isFirst;
+  final bool isLast;
+
+  const _StationDot({required this.isFirst, required this.isLast});
+
+  @override
+  Widget build(BuildContext context) {
+    final isFilled = isFirst || isLast;
+    final color = isFirst
+        ? const Color(0xFF335836)
+        : isLast
+            ? const Color(0xFFD36868)
+            : AppColors.primary;
+
+    return Container(
+      width: 24,
+      height: 24,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: isFilled ? color : Colors.transparent,
+        border: isFilled ? null : Border.all(color: AppColors.primary, width: 2),
+      ),
+      alignment: Alignment.center,
+      child: isFirst
+          ? const Icon(Icons.flag, size: 12, color: Colors.white)
+          : isLast
+              ? const Icon(Icons.flag_rounded, size: 12, color: Colors.white)
+              : Container(width: 6, height: 6, decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle)),
     );
   }
 }

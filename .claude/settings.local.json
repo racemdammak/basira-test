@@ -11,7 +11,9 @@
       "Bash(flutter pub:*)",
       "Bash(dart run:*)",
       "Bash(flutter gen-l10n:*)",
-      "Bash(echo \"EXIT: $?\")"
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(flutter clean:*)",
+      "Bash(flutter build:*)"
     ]
   }
 }

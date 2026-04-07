@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'l10n/app_localizations.dart';
 import 'core/providers.dart';
+import 'core/constants/app_colors.dart';
 import 'features/home/home_screen.dart';
 
 void main() async {
@@ -88,23 +89,64 @@ class BasiraApp extends ConsumerWidget {
         brightness: brightness,
       ),
       useMaterial3: true,
+      iconTheme: IconThemeData(
+        color: isDark ? const Color(0xFF7CA971) : const Color(0xFF335836),
+        size: 24,
+      ),
       appBarTheme: AppBarTheme(
         elevation: 0,
         centerTitle: true,
         backgroundColor: isDark ? const Color(0xFF1A2E1C) : const Color(0xFF335836),
         foregroundColor: isDark ? const Color(0xFF7CA971) : Colors.white,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(16),
+          ),
+        ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(48, 48),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 2,
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          minimumSize: const Size(48, 48),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
         ),
       ),
       cardTheme: CardThemeData(
         elevation: 2,
         color: isDark ? const Color(0xFF1E2E20) : Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        clipBehavior: Clip.antiAlias,
+        shadowColor: isDark ? const Color(0xFF0A0F0C) : const Color(0xFF335836).withOpacity(0.08),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: isDark ? const Color(0xFF253528) : const Color(0xFFF5F0D6),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        hintStyle: TextStyle(
+          color: isDark ? const Color(0xFF6B8068) : Colors.grey.shade400,
+        ),
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        elevation: 4,
       ),
       scaffoldBackgroundColor: isDark ? const Color(0xFF121A14) : const Color(0xFFF5F0D6),
     );
