@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../l10n/app_localizations.dart';
@@ -21,214 +22,120 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final localeCode = ref.watch(localeStringProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text(l10n.appTitle, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 24)),
-        backgroundColor: Colors.transparent,
+        title: Text(
+          l10n.appTitle,
+          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22),
+        ),
+        centerTitle: false,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.8),
         elevation: 0,
-        foregroundColor: AppColors.primary,
+        flexibleSpace: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 7, sigmaY: 7),
+            child: Container(color: Colors.transparent),
+          ),
+        ),
         actions: [
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(_settingsRoute(context));
-            },
-            child: Container(
-              margin: const EdgeInsets.only(right: 16.0, left: 16.0),
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardTheme.color ?? Theme.of(context).colorScheme.surface,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primary.withOpacity(0.08),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Icon(Icons.settings, size: 24, color: AppColors.primary),
-              ),
+          IconButton(
+            onPressed: () => Navigator.of(context).push(_settingsRoute(context)),
+            icon: CircleAvatar(
+              backgroundColor: AppColors.primary.withOpacity(0.1),
+              child: const Icon(Icons.settings_outlined, color: AppColors.primary, size: 20),
             ),
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Padding(
-            padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 30.0),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 10),
-                // Hero Banner
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [AppColors.primary, AppColors.primaryLight],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(28),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.primary.withOpacity(0.35),
-                        blurRadius: 24,
-                        offset: const Offset(0, 12),
-                      ),
-                    ],
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 36.0, horizontal: 24.0),
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.18),
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white.withOpacity(0.25), width: 2),
-                        ),
-                        child: ClipOval(
-                          child: Image.asset(
-                            'assets/icons/icon.png',
-                            width: 56,
-                            height: 56,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        localeCode == 'ar' ? 'مرحباً بك' : 'Welcome to Basira',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        localeCode == 'ar'
-                            ? 'رفيقك الذكي في صفاقس'
-                            : 'Your smart Sfax bus companion',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white.withOpacity(0.9),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
+                
+                // --- Modern Hero Banner ---
+                _buildModernHero(context, localeCode),
+
+                const SizedBox(height: 32),
+
+                // --- Section Title ---
+                Text(
+                  localeCode == 'ar' ? 'خدماتنا' : 'Services',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.5,
+                    color: Theme.of(context).textTheme.titleLarge?.color,
                   ),
                 ),
-                const SizedBox(height: 36),
+                
+                const SizedBox(height: 16),
 
-                // Section Title
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 18.0, left: 4.0, right: 4.0),
-                  child: Text(
-                    localeCode == 'ar' ? 'خدماتنا' : 'Our Services',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w800,
-                      color: Theme.of(context).textTheme.titleLarge?.color,
+                // --- Modern Bento Grid ---
+                GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  childAspectRatio: 1.1,
+                  children: [
+                    _buildServiceTile(
+                      context,
+                      l10n.liveMap,
+                      Icons.map_rounded,
+                      () => Navigator.of(context).push(_mapRoute(context)),
+                      isFullWidth: false,
                     ),
-                  ),
+                    _buildServiceTile(
+                      context,
+                      l10n.planTrip,
+                      Icons.bolt_rounded,
+                      () => Navigator.of(context).push(_stationPickerRoute(context)),
+                      isAccent: true,
+                    ),
+                    _buildServiceTile(
+                      context,
+                      l10n.busSchedules,
+                      Icons.calendar_today_rounded,
+                      () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ScheduleScreen())),
+                    ),
+                    _buildServiceTile(
+                      context,
+                      l10n.nearbyStations,
+                      Icons.location_on_rounded,
+                      () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NearbyStationsScreen())),
+                    ),
+                  ],
                 ),
 
-                _buildActionCard(
-                  context: context,
-                  icon: Icons.map_rounded,
-                  title: l10n.liveMap,
-                  onTap: () {
-                    Navigator.of(context).push(_mapRoute(context));
-                  },
+                const SizedBox(height: 16),
+
+                // --- Horizontal/Secondary Services ---
+                _buildWideServiceTile(
+                  context,
+                  l10n.chatbot,
+                  Icons.chat_bubble_outline_rounded,
+                  () => Navigator.of(context).push(_chatbotRoute(context)),
                 ),
-                _buildActionCard(
-                  context: context,
-                  icon: Icons.directions_bus_filled_rounded,
-                  title: l10n.planTrip,
-                  onTap: () {
-                    Navigator.of(context).push(_stationPickerRoute(context));
-                  },
+                
+                _buildWideServiceTile(
+                  context,
+                  'My Trips',
+                  Icons.auto_awesome_motion_rounded,
+                  () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MyTripsScreen())),
                 ),
-                _buildActionCard(
-                  context: context,
-                  icon: Icons.schedule,
-                  title: l10n.busSchedules,
-                  onTap: () {
-                    Navigator.of(context).push(
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            const ScheduleScreen(),
-                      ),
-                    );
-                  },
-                ),
-                _buildActionCard(
-                  context: context,
-                  icon: Icons.near_me,
-                  title: l10n.nearbyStations,
-                  onTap: () {
-                    Navigator.of(context).push(
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            const NearbyStationsScreen(),
-                      ),
-                    );
-                  },
-                ),
-                _buildActionCard(
-                  context: context,
-                  icon: Icons.track_changes,
-                  title: 'My Trips',
-                  onTap: () {
-                    Navigator.of(context).push(
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            const MyTripsScreen(),
-                      ),
-                    );
-                  },
-                ),
-                _buildActionCard(
-                  context: context,
-                  icon: Icons.people_outline,
-                  title: l10n.crowdPatterns,
-                  onTap: () {
-                    Navigator.of(context).push(
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            const CrowdPatternsScreen(),
-                      ),
-                    );
-                  },
-                ),
-                _buildActionCard(
-                  context: context,
-                  icon: Icons.chat_bubble_rounded,
-                  title: l10n.chatbot,
-                  onTap: () {
-                    Navigator.of(context).push(_chatbotRoute(context));
-                  },
-                ),
-                _buildActionCard(
-                  context: context,
-                  icon: Icons.info_outline,
-                  title: l10n.aboutSoretras,
-                  onTap: () {
-                    Navigator.of(context).push(
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            const AboutScreen(),
-                      ),
-                    );
-                  },
-                ),
+
+                const SizedBox(height: 40),
               ],
             ),
           ),
@@ -237,80 +144,182 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildActionCard({
-    required BuildContext context,
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
+  Widget _buildModernHero(BuildContext context, String localeCode) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color ?? Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(24),
+        gradient: const LinearGradient(
+          colors: [AppColors.primary, AppColors.primaryLight],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.05),
-            blurRadius: 16,
-            offset: const Offset(0, 8),
+            color: AppColors.primary.withOpacity(0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          )
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  localeCode == 'ar' ? 'مرحباً بك' : 'Hello there!',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.8),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  localeCode == 'ar' ? 'بصيرة صفاقس' : 'Welcome to\nBasira Sfax',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 26,
+                    fontWeight: FontWeight.w900,
+                    height: 1.1,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Image.asset('assets/icons/icon.png', width: 50, height: 50),
           ),
         ],
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(24),
-          onTap: onTap,
-          highlightColor: AppColors.primaryLight.withOpacity(0.1),
-          splashColor: AppColors.primary.withOpacity(0.1),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: AppColors.accent.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: Icon(icon, size: 30, color: AppColors.primary),
-                ),
-                const SizedBox(width: 18),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).textTheme.titleMedium?.color,
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: AppColors.primaryLight),
-                ),
-              ],
+    );
+  }
+
+  Widget _buildServiceTile(
+    BuildContext context,
+    String title,
+    IconData icon,
+    VoidCallback onTap, {
+    bool isAccent = false,
+    bool isFullWidth = false,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(28),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: isAccent 
+                ? AppColors.primary 
+                : (isDark ? Colors.white.withOpacity(0.05) : Colors.white),
+            borderRadius: BorderRadius.circular(28),
+            border: Border.all(
+              color: isAccent ? Colors.transparent : (isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
             ),
+            boxShadow: isDark ? [] : [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              )
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Icon(
+                icon,
+                size: 32,
+                color: isAccent ? Colors.white : AppColors.primary,
+              ),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: isAccent ? Colors.white : (isDark ? Colors.white : Colors.black87),
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
+  Widget _buildWideServiceTile(
+    BuildContext context,
+    String title,
+    IconData icon,
+    VoidCallback onTap,
+  ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Icon(icon, color: AppColors.primary, size: 24),
+              ),
+              const SizedBox(width: 16),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+              const Spacer(),
+              Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.grey.withOpacity(0.5)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // --- Routes Identiques ---
   static Route<void> _mapRoute(BuildContext context) =>
-      PageRouteBuilder(pageBuilder: (context, animation, secondaryAnimation) => const MapScreen());
+      PageRouteBuilder(pageBuilder: (_, __, ___) => const MapScreen());
 
   static Route<void> _stationPickerRoute(BuildContext context) =>
-      PageRouteBuilder(pageBuilder: (context, animation, secondaryAnimation) => const StationPickerScreen());
+      PageRouteBuilder(pageBuilder: (_, __, ___) => const StationPickerScreen());
 
   static Route<void> _chatbotRoute(BuildContext context) =>
-      PageRouteBuilder(pageBuilder: (context, animation, secondaryAnimation) => const ChatbotScreen());
+      PageRouteBuilder(pageBuilder: (_, __, ___) => const ChatbotScreen());
 
   static Route<void> _settingsRoute(BuildContext context) =>
-      PageRouteBuilder(pageBuilder: (context, animation, secondaryAnimation) => const SettingsScreen());
+      PageRouteBuilder(pageBuilder: (_, __, ___) => const SettingsScreen());
 }
