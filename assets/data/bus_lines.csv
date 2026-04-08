@@ -1,0 +1,9 @@
+id,lineNumber,directionFrom,directionTo,stationIds,startHour,startMinute,endHour,endMinute,intervalMinutes
+line_1,1,Nassria,Gare SNCFT,nassria|jabri|hached|place_15_novembre|centre_ville|bab_jedid|bab_bhar|gare_sncft,5,30,22,0,15
+line_2,2,Sfax Sud,Université,sfax_sud|cite_el_izdihar|hopital_habib_bourguiba|moussa_ibn_noussair|hay_riadh|cite_el_amal|hopital_hedi_chaker|universite,5,45,21,30,20
+line_4,4,Aéroport,Médina,aeroport|cite_el_habib|hopital_habib_bourguiba|route_tunis|place_15_novembre|centre_ville|medina,6,0,21,0,40
+line_5,5,Gremda,Université,gremda|hopital_habib_bourguiba|centre_ville|universite,6,15,20,30,30
+line_6,6,Sakiet Ezzit,Gare Routière,sakiet_ezzit|sakiet_eddaier|route_tunis|hached|gare_routiere,5,30,22,0,20
+line_10,10,Chihia,Gare SNCFT,chihia|sfax_sud|centre_ville|nassria|gare_sncft,5,40,21,40,25
+line_11,11,Teniour,Bab Bhar,teniour|gare_routiere|nassria|bab_bhar,6,0,21,0,30
+line_15,15,Hay Ennour,Centre Ville,hay_ennour|cite_boudrak|hay_riadh|hopital_hedi_chaker|centre_ville,6,0,21,30,30

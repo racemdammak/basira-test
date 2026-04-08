@@ -5,7 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'l10n/app_localizations.dart';
 import 'core/providers.dart';
-import 'core/constants/app_colors.dart';
+import 'data/services/csv_data_service.dart';
 import 'features/home/home_screen.dart';
 
 void main() async {
@@ -16,6 +16,8 @@ void main() async {
   } catch (_) {
     // Fallback if .env file is missing or malformed
   }
+
+  await CsvDataService.instance.initialize();
 
   // Lock to portrait
   await SystemChrome.setPreferredOrientations([

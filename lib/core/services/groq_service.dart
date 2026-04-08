@@ -10,15 +10,15 @@ class ChatMessage {
   Map<String, dynamic> toJson() => {'role': role, 'content': content};
 }
 
-class OpenRouterService {
+class GroqService {
   late final Dio _dio;
   final List<ChatMessage> _history = [];
 
-  OpenRouterService() {
+  GroqService() {
     _dio = Dio(BaseOptions(
-      baseUrl: openRouterBaseUrl,
+      baseUrl: groqBaseUrl,
       headers: {
-        'Authorization': 'Bearer $openRouterApiKey',
+        'Authorization': 'Bearer $groqApiKey',
         'Content-Type': 'application/json',
       },
       connectTimeout: const Duration(seconds: 30),
@@ -53,7 +53,10 @@ class OpenRouterService {
           (data['choices'] as List).first['message']['content'] as String;
       _history.add(ChatMessage(role: 'assistant', content: assistantMsg));
       return assistantMsg;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      // Log the error for debugging (in production, you might use a logging service)
+      print('GroqService Error: $e');
+      print('StackTrace: $stackTrace');
       return 'Sorry, I could not connect to the AI service. Please try again later.';
     }
   }

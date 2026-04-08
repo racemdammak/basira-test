@@ -1,22 +1,23 @@
-import '../../core/services/openrouter_service.dart';
-import '../mock/buses_mock.dart';
+import '../../core/services/groq_service.dart';
+import 'bus_repository.dart';
 
 class ChatRepository {
-  final OpenRouterService _service = OpenRouterService();
+  final GroqService _service = GroqService();
+  final BusRepository _busRepository = BusRepository();
 
   Future<String> sendQuery(String userMessage, String languageCode) async {
-    final busData = _buildSystemPrompt(languageCode);
+    final busData = await _buildSystemPrompt(languageCode);
     return _service.sendMessage(
       userMessage: userMessage,
       systemPrompt: busData,
     );
   }
 
-  String _buildSystemPrompt(String lang) {
+  Future<String> _buildSystemPrompt(String lang) async {
     final langNames = {'ar': 'Arabic', 'fr': 'French', 'tun': 'Tunisian Arabic', 'en': 'English'};
     final langName = langNames[lang] ?? 'French';
 
-    final buses = generateLiveBuses();
+    final buses = await _busRepository.getBuses();
     final busJson = buses.map((b) => {
       'id': b.id,
       'line': b.lineNumber,

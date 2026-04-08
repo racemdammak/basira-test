@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../l10n/app_localizations.dart';
+import 'package:flutter/services.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/providers.dart';
@@ -216,7 +217,10 @@ class HomeScreen extends ConsumerWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: onTap,
+        onTap: () {
+          HapticFeedback.lightImpact(); // vibration légère
+          onTap();
+        },
         borderRadius: BorderRadius.circular(28),
         child: Container(
           padding: const EdgeInsets.all(20),
@@ -226,31 +230,39 @@ class HomeScreen extends ConsumerWidget {
                 : (isDark ? Colors.white.withOpacity(0.05) : Colors.white),
             borderRadius: BorderRadius.circular(28),
             border: Border.all(
-              color: isAccent ? Colors.transparent : (isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
+              color: isAccent
+                  ? Colors.transparent
+                  : (isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
             ),
-            boxShadow: isDark ? [] : [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.03),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              )
-            ],
+            boxShadow: isDark
+                ? []
+                : [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.03),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    )
+                  ],
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center, // 🔥 CENTER VERTICALLY
+            crossAxisAlignment: CrossAxisAlignment.center, // 🔥 CENTER HORIZONTALLY
             children: [
               Icon(
                 icon,
-                size: 32,
+                size: 36, // 🔥 bigger for visibility
                 color: isAccent ? Colors.white : AppColors.primary,
               ),
+              const SizedBox(height: 12),
               Text(
                 title,
+                textAlign: TextAlign.center, // 🔥 CENTER TEXT
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.w800,
-                  color: isAccent ? Colors.white : (isDark ? Colors.white : Colors.black87),
+                  color: isAccent
+                      ? Colors.white
+                      : (isDark ? Colors.white : Colors.black87),
                 ),
               ),
             ],

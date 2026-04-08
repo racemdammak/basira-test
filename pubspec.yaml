@@ -32,6 +32,7 @@ dependencies:
 
   # HTTP / API
   dio: ^5.4.0
+  csv: ^6.0.0
 
   # State Management
   flutter_riverpod: ^2.6.1
@@ -62,5 +63,6 @@ flutter:
     - .env
     - assets/sounds/
     - assets/icons/
+    - assets/data/
 
     

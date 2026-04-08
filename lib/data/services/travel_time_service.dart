@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../mock/buses_mock.dart';
-import '../mock/stations_mock.dart';
+import '../services/csv_data_service.dart';
 
 /// Service that estimates travel time & fare between two stations.
 class TravelTimeEstimate {
@@ -26,7 +25,7 @@ class TravelTimeService {
   List<TravelTimeEstimate> estimate(String originId, String destinationId) {
     final results = <TravelTimeEstimate>[];
 
-    for (final line in allBusLines) {
+    for (final line in CsvDataService.instance.allBusLines) {
       final oi = line.stationIds.indexOf(originId);
       final di = line.stationIds.indexOf(destinationId);
       if (oi == -1 || di == -1 || oi == di) continue;
@@ -34,8 +33,8 @@ class TravelTimeService {
       final stops = (di - oi).abs();
       final minutes = stops * 5; // ~5 min between stops
 
-      final origin = allStations[originId];
-      final destination = allStations[destinationId];
+      final origin = CsvDataService.instance.allStations[originId];
+      final destination = CsvDataService.instance.allStations[destinationId];
 
       results.add(TravelTimeEstimate(
         busLine: line.lineNumber,
@@ -51,7 +50,7 @@ class TravelTimeService {
 
   /// Quick estimate for a single line
   TravelTimeEstimate? estimateQuick(String lineId, String originId, String destinationId) {
-    final line = allBusLines.firstWhere(
+    final line = CsvDataService.instance.allBusLines.firstWhere(
       (l) => l.id == lineId,
       orElse: () => throw Exception('Line not found: $lineId'),
     );
@@ -60,8 +59,8 @@ class TravelTimeService {
     if (oi == -1 || di == -1 || oi == di) return null;
 
     final stops = (di - oi).abs();
-    final origin = allStations[originId];
-    final destination = allStations[destinationId];
+    final origin = CsvDataService.instance.allStations[originId];
+    final destination = CsvDataService.instance.allStations[destinationId];
 
     return TravelTimeEstimate(
       busLine: line.lineNumber,
