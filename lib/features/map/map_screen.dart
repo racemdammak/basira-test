@@ -4,16 +4,23 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' as gmaps; 
-import 'package:latlong2/latlong.dart' as ll2; // Prefix latlong2 to avoid conflicts
+import 'package:latlong2/latlong.dart' as ll2; 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../l10n/app_localizations.dart';
-import '../../data/models/bus.dart';
+
 import '../../core/constants/app_colors.dart';
 import '../../core/providers.dart';
+import '../../data/models/bus.dart';
 import '../../data/mock/stations_mock.dart';
 import '../../data/mock/buses_mock.dart';
 import '../../data/services/travel_time_service.dart';
+
+// --- ADD THESE 3 IMPORTS FOR THE GPS TRACKING FEATURE ---
+import '../../data/services/storage_service.dart';
+import '../../data/models/favorite_route.dart';
+import '../trip/trip_active_screen.dart'; // This is the line fixing your error!
+
 
 enum _MapMode { normal, selectingOrigin, selectingDestination }
 
@@ -461,13 +468,56 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                         ),
                       );
                     }),
-                  Center(
-                    child: TextButton.icon(
-                      onPressed: _resetRoute,
-                      icon: const Icon(Icons.refresh_rounded, size: 18),
-                      label: Text(l10n.newRoute, style: const TextStyle(fontWeight: FontWeight.w700)),
-                      style: TextButton.styleFrom(foregroundColor: AppColors.primaryLight),
-                    ),
+                  // REPLACE the old Center(child: TextButton(...)) with this:
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextButton.icon(
+                          onPressed: _resetRoute,
+                          icon: const Icon(Icons.refresh_rounded, size: 18),
+                          label: Text(l10n.newRoute, style: const TextStyle(fontWeight: FontWeight.w700)),
+                          style: TextButton.styleFrom(foregroundColor: isDark ? Colors.white54 : AppColors.textSecondary),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            // 1. Set the active trip in the global state
+                            ref.read(activeTripProvider.notifier).state =
+                                ref.read(activeTripProvider).copyWith(
+                                      originId: _originId,
+                                      destinationId: _destId,
+                                    );
+                            
+                            // 2. Save it to their trip history
+                            ref.read(storageServiceProvider).addToHistory(TripHistoryEntry(
+                              originId: _originId!,
+                              destinationId: _destId!,
+                              date: DateTime.now(),
+                              busLineUsed: estimates.isNotEmpty ? estimates.first.busLine : null,
+                            ));
+
+                            // 3. Navigate to the Live GPS Tracking screen
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const TripActiveScreen(),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.directions_bus_rounded, size: 18),
+                          label: Text(l10n.takeThisBus, style: const TextStyle(fontWeight: FontWeight.w700)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            elevation: 0,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
