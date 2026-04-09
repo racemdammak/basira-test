@@ -71,13 +71,13 @@ class HomeScreen extends ConsumerWidget {
                 const SizedBox(height: 10),
                 
                 // --- Modern Hero Banner ---
-                _buildModernHero(context, localeCode),
+                _buildModernHero(context, l10n, localeCode),
 
                 const SizedBox(height: 32),
 
                 // --- Section Title ---
                 Text(
-                  localeCode == 'ar' ? 'خدماتنا' : 'Services',
+                  l10n.ourServices,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 
@@ -90,7 +90,7 @@ class HomeScreen extends ConsumerWidget {
                   crossAxisCount: 2,
                   mainAxisSpacing: 16,
                   crossAxisSpacing: 16,
-                  childAspectRatio: 1.1,
+                  childAspectRatio: 0.9,
                   children: [
                     _buildServiceTile(
                       context,
@@ -133,7 +133,7 @@ class HomeScreen extends ConsumerWidget {
                 
                 _buildWideServiceTile(
                   context,
-                  'My Trips',
+                  l10n.myTrips,
                   Icons.auto_awesome_motion_rounded,
                   () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MyTripsScreen())),
                 ),
@@ -147,7 +147,7 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildModernHero(BuildContext context, String localeCode) {
+  Widget _buildModernHero(BuildContext context, AppLocalizations l10n, String localeCode) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(32),
@@ -177,7 +177,7 @@ class HomeScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      localeCode == 'ar' ? 'مرحباً بك' : 'Hello there!',
+                      l10n.welcomeText,
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.7),
                         fontSize: 16,
@@ -187,7 +187,7 @@ class HomeScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      localeCode == 'ar' ? 'بصيرة صفاقس' : 'Welcome to\nBasira Sfax',
+                      l10n.welcomeSubtitle,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 32,
@@ -271,14 +271,18 @@ class HomeScreen extends ConsumerWidget {
                       color: isAccent ? Colors.white : AppColors.primaryLight,
                     ),
                     const SizedBox(height: 16),
-                    Text(
-                      title,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 0.5,
-                        color: isAccent ? Colors.white : (isDark ? Colors.white : AppColors.textPrimary),
+                    Flexible(
+                      child: Text(
+                        title,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.5,
+                          color: isAccent ? Colors.white : (isDark ? Colors.white : AppColors.textPrimary),
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
@@ -340,13 +344,17 @@ class HomeScreen extends ConsumerWidget {
                         child: Icon(icon, color: AppColors.primaryLight, size: 26),
                       ),
                       const SizedBox(width: 20),
-                      Text(
-                        title,
-                        style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.3,
-                          color: isDark ? Colors.white : AppColors.textPrimary,
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.3,
+                            color: isDark ? Colors.white : AppColors.textPrimary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const Spacer(),

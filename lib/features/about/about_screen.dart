@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_colors.dart';
+import '../../l10n/app_localizations.dart';
 
 class AboutScreen extends ConsumerWidget {
   const AboutScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('About SORETRAS'),
+        title: Text(l10n.aboutSoretras),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -35,17 +37,15 @@ class AboutScreen extends ConsumerWidget {
                         child: const Icon(Icons.info_outline_rounded, color: AppColors.primary, size: 22),
                       ),
                       const SizedBox(width: 14),
-                      const Text(
-                        'About SORETRAS',
-                        style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+                      Text(
+                        l10n.aboutSoretras,
+                        style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
                       ),
                     ],
                   ),
                   const SizedBox(height: 14),
                   Text(
-                    'SORETRAS (Soci\u00E9t\u00E9 R\u00E9gionale de Transport du Sahel) '
-                    'provides public bus transportation across Sfax and surrounding areas. '
-                    'Established to serve the citizens with reliable and affordable transit.',
+                    l10n.aboutDescription,
                     style: TextStyle(fontSize: 14, height: 1.6, color: isDark ? const Color(0xFFB0C4AE) : AppColors.textSecondary),
                   ),
                 ],
@@ -72,34 +72,34 @@ class AboutScreen extends ConsumerWidget {
                         child: const Icon(Icons.phone_rounded, color: AppColors.primary, size: 22),
                       ),
                       const SizedBox(width: 14),
-                      const Text('Contact', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+                      Text(l10n.contact, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
                     ],
                   ),
                   const SizedBox(height: 14),
                   _ContactRow(
                     icon: Icons.phone_rounded,
-                    label: 'Phone',
+                    label: l10n.phone,
                     value: '+216 74 240 041',
                     isDark: isDark,
                   ),
                   const SizedBox(height: 10),
                   _ContactRow(
                     icon: Icons.fax_rounded,
-                    label: 'Fax',
+                    label: l10n.fax,
                     value: '+216 74 240 505',
                     isDark: isDark,
                   ),
                   const SizedBox(height: 10),
                   _ContactRow(
                     icon: Icons.email_rounded,
-                    label: 'Email',
+                    label: l10n.email,
                     value: 'contact@soretras.tn',
                     isDark: isDark,
                   ),
                   const SizedBox(height: 10),
                   _ContactRow(
                     icon: Icons.location_on_rounded,
-                    label: 'Address',
+                    label: l10n.address,
                     value: 'Avenue Habib Bourguiba, Sfax',
                     isDark: isDark,
                   ),
@@ -127,13 +127,12 @@ class AboutScreen extends ConsumerWidget {
                         child: const Icon(Icons.access_time_rounded, color: AppColors.primary, size: 22),
                       ),
                       const SizedBox(width: 14),
-                      const Text('Working Hours', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+                      Text(l10n.workingHours, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
                     ],
                   ),
                   const SizedBox(height: 14),
                   Text(
-                    'Buses operate daily from 05:30 to 22:00.\n'
-                    'Head office open Monday to Friday, 08:00 - 17:00.',
+                    l10n.workingHoursDetail,
                     style: TextStyle(fontSize: 14, color: isDark ? const Color(0xFFB0C4AE) : AppColors.textSecondary),
                   ),
                 ],
@@ -160,14 +159,12 @@ class AboutScreen extends ConsumerWidget {
                         child: const Icon(Icons.payments_rounded, color: AppColors.primary, size: 22),
                       ),
                       const SizedBox(width: 14),
-                      const Text('Fares', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+                      Text(l10n.fares, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
                     ],
                   ),
                   const SizedBox(height: 14),
                   Text(
-                    'Standard fare: 0.50 TND (cash)\n'
-                    'Subscription card: 0.35 TND per ride\n'
-                    'Student discount available with valid card.',
+                    l10n.faresDetail,
                     style: TextStyle(fontSize: 14, color: isDark ? const Color(0xFFB0C4AE) : AppColors.textSecondary),
                   ),
                 ],
@@ -194,19 +191,12 @@ class AboutScreen extends ConsumerWidget {
                         child: const Icon(Icons.feedback_rounded, color: AppColors.primary, size: 22),
                       ),
                       const SizedBox(width: 14),
-                      const Text('Complaints & Feedback', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+                      Text(l10n.complaintsFeedback, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
                     ],
                   ),
                   const SizedBox(height: 14),
                   Text(
-                    'To file a complaint or provide feedback:\n'
-                    '1. Call the complaints line: +216 74 240 042\n'
-                    '2. Email: reclamations@soretras.tn\n'
-                    '3. Visit the head office in person\n\n'
-                    'Please provide:\n'
-                    '- Bus line number\n'
-                    '- Time of incident\n'
-                    '- Station name',
+                    l10n.complaintsDetail,
                     style: TextStyle(fontSize: 14, height: 1.6, color: isDark ? const Color(0xFFB0C4AE) : AppColors.textSecondary),
                   ),
                 ],
@@ -242,7 +232,7 @@ class AboutScreen extends ConsumerWidget {
                       ),
                     ),
                     Text(
-                      'Powered by SORETRAS Sfax',
+                      l10n.poweredBy,
                       style: TextStyle(fontSize: 11, color: isDark ? const Color(0xFF6B8068) : AppColors.textSecondary),
                     ),
                   ],

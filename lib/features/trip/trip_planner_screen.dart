@@ -185,7 +185,7 @@ class _TripCardState extends ConsumerState<_TripCard> {
                           Icon(Icons.timer_outlined, size: 16, color: AppColors.primary),
                           const SizedBox(width: 4),
                           Text(
-                            '$minutes min',
+                            '$minutes ${l10n.minutes}',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: AppColors.primary,
@@ -232,7 +232,7 @@ class _TripCardState extends ConsumerState<_TripCard> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        'L${section.busLineNumber}',
+                        l10n.lineLabel(section.busLineNumber),
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -242,7 +242,7 @@ class _TripCardState extends ConsumerState<_TripCard> {
                     ),
                     const SizedBox(width: 10),
                     Text(
-                      '${section.duration.inMinutes} min',
+                      '${section.duration.inMinutes} ${l10n.minutes}',
                       style: TextStyle(
                         color: isDark ? const Color(0xFFB0C4AE) : AppColors.textSecondary,
                       ),

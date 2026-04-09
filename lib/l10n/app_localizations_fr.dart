@@ -395,4 +395,88 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get darkModeSubtitle => 'Basculer vers le thème sombre';
+
+  @override
+  String get chatbotSubtitle =>
+      'Votre assistant éthéré pour le transport à Sfax';
+
+  @override
+  String get stopTalking => 'Arrêter de parler';
+
+  @override
+  String get quickQuestions => 'Questions rapides';
+
+  @override
+  String get suggestedQuestion1 => '⏰ C\'est quand le prochain bus ?';
+
+  @override
+  String get suggestedQuestion2 => '♿ Quels bus ont des rampes ?';
+
+  @override
+  String get suggestedQuestion3 => '🎫 Combien coûte un ticket ?';
+
+  @override
+  String get suggestedQuestion4 => '📅 Horaires des lignes de bus';
+
+  @override
+  String get poweredBy => 'Propulsé par SORETRAS Sfax';
+
+  @override
+  String get enableLocationText =>
+      'Veuillez activer les services de localisation dans les paramètres de votre appareil.';
+
+  @override
+  String get tapToSelectOrigin =>
+      '📍 Appuyez sur la carte pour sélectionner votre station d\'origine';
+
+  @override
+  String get tapToSelectDest =>
+      '📍 Appuyez sur la carte pour sélectionner votre station de destination';
+
+  @override
+  String get noDirectRoute => 'Aucun itinéraire direct de bus trouvé.';
+
+  @override
+  String lineLabel(Object number) {
+    return 'Ligne $number';
+  }
+
+  @override
+  String stopsLabel(Object number) {
+    return '$number arrêts';
+  }
+
+  @override
+  String get newRoute => 'Nouvel itinéraire';
+
+  @override
+  String shareMessage(Object destination, Object line, Object origin) {
+    return 'Itinéraire Basira : $origin → $destination\nLigne de bus : $line\nConsultez les horaires en direct sur l\'application Basira !';
+  }
+
+  @override
+  String everyXMin(Object minutes) {
+    return 'Toutes les $minutes min';
+  }
+
+  @override
+  String linesLabel(Object lines) {
+    return 'Lignes : $lines';
+  }
+
+  @override
+  String kmAway(Object distance) {
+    return '$distance km';
+  }
+
+  @override
+  String get today => 'Aujourd\'hui';
+
+  @override
+  String get yesterday => 'Hier';
+
+  @override
+  String daysAgo(Object days) {
+    return 'il y a $days jours';
+  }
 }

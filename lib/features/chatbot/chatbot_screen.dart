@@ -5,7 +5,32 @@ import '../../l10n/app_localizations.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/providers.dart';
-import '../../core/services/stt_service.dart';
+
+TextSpan parseChatText(String text, TextStyle baseStyle) {
+  final RegExp boldRegex = RegExp(r'\*\*(.*?)\*\*');
+  final List<TextSpan> spans = [];
+  int lastIndex = 0;
+
+  for (final match in boldRegex.allMatches(text)) {
+    // Add text before the bold
+    if (match.start > lastIndex) {
+      spans.add(TextSpan(text: text.substring(lastIndex, match.start), style: baseStyle));
+    }
+    // Add the bold text
+    spans.add(TextSpan(
+      text: match.group(1),
+      style: baseStyle.copyWith(fontWeight: FontWeight.bold),
+    ));
+    lastIndex = match.end;
+  }
+
+  // Add remaining text
+  if (lastIndex < text.length) {
+    spans.add(TextSpan(text: text.substring(lastIndex), style: baseStyle));
+  }
+
+  return TextSpan(children: spans);
+}
 
 class ChatbotScreen extends ConsumerStatefulWidget {
   const ChatbotScreen({super.key});
@@ -19,12 +44,14 @@ class _ChatbotScreenState extends ConsumerState<ChatbotScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isListening = false;
   bool _isSpeaking = false;
-  final List<String> _suggestedQuestions = [
-    '\u{1F552} When is the next bus?',
-    '\u267F Which buses have ramps?',
-    '\u{1F3AB} How much is a ticket?',
-    '\u{1F4C5} Bus lines schedule',
-  ];
+  List<String> _getSuggestedQuestions(AppLocalizations l10n) {
+    return [
+      l10n.suggestedQuestion1,
+      l10n.suggestedQuestion2,
+      l10n.suggestedQuestion3,
+      l10n.suggestedQuestion4,
+    ];
+  }
 
   @override
   void dispose() {
@@ -63,7 +90,13 @@ class _ChatbotScreenState extends ConsumerState<ChatbotScreen> {
               child: const Icon(Icons.chat_bubble_rounded, size: 18),
             ),
             const SizedBox(width: 8),
-            Text(l10n.chatbot),
+            Expanded(
+              child: Text(
+                l10n.chatbot,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         backgroundColor: AppColors.primary,
@@ -72,7 +105,7 @@ class _ChatbotScreenState extends ConsumerState<ChatbotScreen> {
           if (_isSpeaking)
             IconButton(
               icon: const Icon(Icons.volume_off_rounded),
-              tooltip: 'Stop talking',
+              tooltip: l10n.stopTalking,
               onPressed: () {
                 ref.read(ttsServiceProvider).stop();
                 setState(() => _isSpeaking = false);
@@ -103,7 +136,7 @@ class _ChatbotScreenState extends ConsumerState<ChatbotScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '\u{1F4A1} Quick Questions',
+                        '\u{1F4A1} ${l10n.quickQuestions}',
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
@@ -114,7 +147,7 @@ class _ChatbotScreenState extends ConsumerState<ChatbotScreen> {
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
-                          children: _suggestedQuestions.map(_buildQuickChip).toList(),
+                          children: _getSuggestedQuestions(l10n).map(_buildQuickChip).toList(),
                         ),
                       ),
                     ],
@@ -159,7 +192,7 @@ class _ChatbotScreenState extends ConsumerState<ChatbotScreen> {
                               ),
                               const SizedBox(height: 12),
                               Text(
-                                'Your ethereal assistant for Sfax transit',
+                                l10n.chatbotSubtitle,
                                 textAlign: TextAlign.center,
                                 style: Theme.of(context).textTheme.bodyMedium,
                               ),
@@ -251,8 +284,8 @@ class _ChatbotScreenState extends ConsumerState<ChatbotScreen> {
                           child: TextField(
                             controller: _textController,
                             style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-                            decoration: const InputDecoration(
-                              hintText: 'Type your question...',
+                            decoration: InputDecoration(
+                              hintText: l10n.chatPlaceholder,
                               filled: false,
                               border: InputBorder.none,
                               enabledBorder: InputBorder.none,
@@ -407,17 +440,25 @@ class _ChatbotScreenState extends ConsumerState<ChatbotScreen> {
   Future<void> _sendMessage(WidgetRef ref, String text) async {
     final langCode = ref.read(languageCodeProvider);
 
+    // 1. Gently mask the text JUST for the UI display
+    String displayString = text
+        .replaceAll(RegExp(r'north korea', caseSensitive: false), 'Nassria')
+        .replaceAll(RegExp(r'bendford', caseSensitive: false), 'Bab Bhar')
+        .replaceAll(RegExp(r'airport', caseSensitive: false), 'Aéroport');
+
     debugPrint('Chatbot: Sending message: $text');
 
+    // 2. Add the CLEANED text to the chat UI
     ref.read(chatMessagesProvider.notifier).state = [
       ...ref.read(chatMessagesProvider),
-      {'role': 'user', 'content': text},
+      {'role': 'user', 'content': displayString}, // <-- Use displayString here
     ];
     ref.read(chatIsLoadingProvider.notifier).state = true;
     _scrollToBottom();
 
+    // 3. Send the original or cleaned text to Gemini (it will figure it out using the prompt!)
     final repo = ref.read(chatRepositoryProvider);
-    final response = await repo.sendQuery(text, langCode);
+    final response = await repo.sendQuery(displayString, langCode);
 
     debugPrint('Chatbot: Received response: $response');
 
@@ -441,6 +482,7 @@ class _ChatbotScreenState extends ConsumerState<ChatbotScreen> {
 
   Future<void> _startVoiceInput(WidgetRef ref) async {
     final stt = ref.read(sttServiceProvider);
+    final l10n = AppLocalizations.of(context);
 
     setState(() => _isListening = true);
 
@@ -455,13 +497,15 @@ class _ChatbotScreenState extends ConsumerState<ChatbotScreen> {
         if (result != null && result.isNotEmpty) {
           _sendMessage(ref, result);
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context).error),
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: Colors.redAccent.withOpacity(0.8),
-            ),
-          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.error),
+                behavior: SnackBarBehavior.floating,
+                backgroundColor: Colors.redAccent.withOpacity(0.8),
+              ),
+            );
+          }
         }
       }
     } catch (_) {
@@ -614,13 +658,15 @@ class _DriftingBubbleState extends State<_DriftingBubble> with SingleTickerProvi
                   ],
                   border: !widget.isUser ? Border.all(color: Colors.white.withOpacity(0.1)) : null,
                 ),
-                child: Text(
-                  widget.content,
-                  style: TextStyle(
-                    fontSize: 15,
-                    height: 1.5,
-                    fontWeight: FontWeight.w500,
-                    color: widget.isUser ? Colors.white : (isDark ? Colors.white : AppColors.textPrimary),
+                child: Text.rich(
+                  parseChatText(
+                    widget.content,
+                    TextStyle(
+                      fontSize: 15,
+                      height: 1.5,
+                      fontWeight: FontWeight.w500,
+                      color: widget.isUser ? Colors.white : (isDark ? Colors.white : AppColors.textPrimary),
+                    ),
                   ),
                 ),
               ),

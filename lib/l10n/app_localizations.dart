@@ -857,6 +857,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Switch to dark theme'**
   String get darkModeSubtitle;
+
+  /// No description provided for @chatbotSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your ethereal assistant for Sfax transit'**
+  String get chatbotSubtitle;
+
+  /// No description provided for @stopTalking.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop talking'**
+  String get stopTalking;
+
+  /// No description provided for @quickQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Questions'**
+  String get quickQuestions;
+
+  /// No description provided for @suggestedQuestion1.
+  ///
+  /// In en, this message translates to:
+  /// **'⏰ When is the next bus?'**
+  String get suggestedQuestion1;
+
+  /// No description provided for @suggestedQuestion2.
+  ///
+  /// In en, this message translates to:
+  /// **'♿ Which buses have ramps?'**
+  String get suggestedQuestion2;
+
+  /// No description provided for @suggestedQuestion3.
+  ///
+  /// In en, this message translates to:
+  /// **'🎫 How much is a ticket?'**
+  String get suggestedQuestion3;
+
+  /// No description provided for @suggestedQuestion4.
+  ///
+  /// In en, this message translates to:
+  /// **'📅 Bus lines schedule'**
+  String get suggestedQuestion4;
+
+  /// No description provided for @poweredBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Powered by SORETRAS Sfax'**
+  String get poweredBy;
+
+  /// No description provided for @enableLocationText.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enable location services in your device settings.'**
+  String get enableLocationText;
+
+  /// No description provided for @tapToSelectOrigin.
+  ///
+  /// In en, this message translates to:
+  /// **'📍 Tap the map to select your origin station'**
+  String get tapToSelectOrigin;
+
+  /// No description provided for @tapToSelectDest.
+  ///
+  /// In en, this message translates to:
+  /// **'📍 Tap the map to select your destination station'**
+  String get tapToSelectDest;
+
+  /// No description provided for @noDirectRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'No direct bus route found.'**
+  String get noDirectRoute;
+
+  /// No description provided for @lineLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Line {number}'**
+  String lineLabel(Object number);
+
+  /// No description provided for @stopsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{number} stops'**
+  String stopsLabel(Object number);
+
+  /// No description provided for @newRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'New Route'**
+  String get newRoute;
+
+  /// No description provided for @shareMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Basira Route: {origin} → {destination}\nBus line: {line}\nCheck live schedules at Basira app!'**
+  String shareMessage(Object destination, Object line, Object origin);
+
+  /// No description provided for @everyXMin.
+  ///
+  /// In en, this message translates to:
+  /// **'Every {minutes}min'**
+  String everyXMin(Object minutes);
+
+  /// No description provided for @linesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Lines: {lines}'**
+  String linesLabel(Object lines);
+
+  /// No description provided for @kmAway.
+  ///
+  /// In en, this message translates to:
+  /// **'{distance} km away'**
+  String kmAway(Object distance);
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get yesterday;
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days ago'**
+  String daysAgo(Object days);
 }
 
 class _AppLocalizationsDelegate

@@ -238,9 +238,13 @@ class _SectionHeader extends StatelessWidget {
       children: [
         _IconCircle(icon: icon),
         const SizedBox(width: 12),
-        Text(
-          title,
-          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+        Expanded(
+          child: Text(
+            title,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ],
     );

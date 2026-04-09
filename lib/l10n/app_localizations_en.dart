@@ -392,4 +392,87 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get darkModeSubtitle => 'Switch to dark theme';
+
+  @override
+  String get chatbotSubtitle => 'Your ethereal assistant for Sfax transit';
+
+  @override
+  String get stopTalking => 'Stop talking';
+
+  @override
+  String get quickQuestions => 'Quick Questions';
+
+  @override
+  String get suggestedQuestion1 => '⏰ When is the next bus?';
+
+  @override
+  String get suggestedQuestion2 => '♿ Which buses have ramps?';
+
+  @override
+  String get suggestedQuestion3 => '🎫 How much is a ticket?';
+
+  @override
+  String get suggestedQuestion4 => '📅 Bus lines schedule';
+
+  @override
+  String get poweredBy => 'Powered by SORETRAS Sfax';
+
+  @override
+  String get enableLocationText =>
+      'Please enable location services in your device settings.';
+
+  @override
+  String get tapToSelectOrigin =>
+      '📍 Tap the map to select your origin station';
+
+  @override
+  String get tapToSelectDest =>
+      '📍 Tap the map to select your destination station';
+
+  @override
+  String get noDirectRoute => 'No direct bus route found.';
+
+  @override
+  String lineLabel(Object number) {
+    return 'Line $number';
+  }
+
+  @override
+  String stopsLabel(Object number) {
+    return '$number stops';
+  }
+
+  @override
+  String get newRoute => 'New Route';
+
+  @override
+  String shareMessage(Object destination, Object line, Object origin) {
+    return 'Basira Route: $origin → $destination\nBus line: $line\nCheck live schedules at Basira app!';
+  }
+
+  @override
+  String everyXMin(Object minutes) {
+    return 'Every ${minutes}min';
+  }
+
+  @override
+  String linesLabel(Object lines) {
+    return 'Lines: $lines';
+  }
+
+  @override
+  String kmAway(Object distance) {
+    return '$distance km away';
+  }
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String daysAgo(Object days) {
+    return '$days days ago';
+  }
 }

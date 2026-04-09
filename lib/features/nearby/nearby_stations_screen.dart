@@ -92,7 +92,7 @@ class NearbyStationsScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Lines: ${station.lineNumbers.join(", ")}',
+                          l10n.linesLabel(station.lineNumbers.join(", ")),
                           style: const TextStyle(
                             fontSize: 13,
                             color: AppColors.textSecondary,
@@ -100,7 +100,7 @@ class NearbyStationsScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          '${(dist / 1000).toStringAsFixed(1)} km away',
+                          l10n.kmAway((dist / 1000).toStringAsFixed(1)),
                           style: TextStyle(
                             fontSize: 12,
                             color: isClosest ? Colors.red.shade700 : AppColors.textSecondary,

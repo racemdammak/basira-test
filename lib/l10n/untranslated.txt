@@ -1,9 +1,37 @@
 {
   "ar": [
-    "tunisian"
+    "tunisian",
+    "everyXMin",
+    "linesLabel",
+    "kmAway"
   ],
 
   "fr": [
     "tunisian"
+  ],
+
+  "tun": [
+    "chatbotSubtitle",
+    "stopTalking",
+    "quickQuestions",
+    "suggestedQuestion1",
+    "suggestedQuestion2",
+    "suggestedQuestion3",
+    "suggestedQuestion4",
+    "poweredBy",
+    "enableLocationText",
+    "tapToSelectOrigin",
+    "tapToSelectDest",
+    "noDirectRoute",
+    "lineLabel",
+    "stopsLabel",
+    "newRoute",
+    "shareMessage",
+    "everyXMin",
+    "linesLabel",
+    "kmAway",
+    "today",
+    "yesterday",
+    "daysAgo"
   ]
 }

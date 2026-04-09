@@ -59,7 +59,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           context: context,
           builder: (_) => AlertDialog(
             title: Text(AppLocalizations.of(context).error),
-            content: Text('Please enable location services in your device settings.'),
+            content: Text(AppLocalizations.of(context).enableLocationText),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
@@ -290,9 +290,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     // Determine what's shown in the instruction bar
     String? instruction;
     if (_mode == _MapMode.selectingOrigin) {
-      instruction = '\u{1F4CD} Tap the map to select your origin station';
+      instruction = l10n.tapToSelectOrigin;
     } else if (_mode == _MapMode.selectingDestination) {
-      instruction = '\u{1F4CD} Tap the map to select your destination station';
+      instruction = l10n.tapToSelectDest;
     }
 
     return Scaffold(
@@ -417,6 +417,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
   // ─────── Estimation bar ───────
   Widget _buildEstimationBar(bool isDark) {
+    final l10n = AppLocalizations.of(context);
     final estimates = TravelTimeService().estimate(_originId!, _destId!);
     final origin = allStations[_originId]!;
     final dest = allStations[_destId]!;
@@ -478,7 +479,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   const SizedBox(height: 20),
                   // Estimates
                   if (estimates.isEmpty)
-                    const Text('No direct bus route found.', style: TextStyle(color: Colors.redAccent))
+                    Text(l10n.noDirectRoute, style: const TextStyle(color: Colors.redAccent))
                   else
                     ...estimates.take(2).map((est) {
                       return Container(
@@ -498,7 +499,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
-                                'Line ${est.busLine}',
+                                l10n.lineLabel(est.busLine),
                                 style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 12),
                               ),
                             ),
@@ -511,7 +512,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                                   style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: AppColors.primaryLight),
                                 ),
                                 Text(
-                                  '${est.stops} stops',
+                                  l10n.stopsLabel(est.stops.toString()),
                                   style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : AppColors.textSecondary),
                                 ),
                               ],
@@ -525,7 +526,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                     child: TextButton.icon(
                       onPressed: _resetRoute,
                       icon: const Icon(Icons.refresh_rounded, size: 18),
-                      label: const Text('New Route', style: TextStyle(fontWeight: FontWeight.w700)),
+                      label: Text(l10n.newRoute, style: const TextStyle(fontWeight: FontWeight.w700)),
                       style: TextButton.styleFrom(foregroundColor: AppColors.primaryLight),
                     ),
                   ),

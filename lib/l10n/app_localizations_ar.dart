@@ -391,4 +391,84 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get darkModeSubtitle => 'تبديل إلى السمة الداكنة';
+
+  @override
+  String get chatbotSubtitle => 'مساعدك الافتراضي لنقل صفاقس';
+
+  @override
+  String get stopTalking => 'توقف عن الكلام';
+
+  @override
+  String get quickQuestions => 'أسئلة سريعة';
+
+  @override
+  String get suggestedQuestion1 => '⏰ متى تكون الحافلة القادمة؟';
+
+  @override
+  String get suggestedQuestion2 => '♿ أي الحافلات بها منحدرات؟';
+
+  @override
+  String get suggestedQuestion3 => '🎫 كم سعر التذكرة؟';
+
+  @override
+  String get suggestedQuestion4 => '📅 جدول خطوط الحافلات';
+
+  @override
+  String get poweredBy => 'مدعوم من سورتاس صفاقس';
+
+  @override
+  String get enableLocationText => 'يرجى تفعيل خدمات الموقع في إعدادات جهازك.';
+
+  @override
+  String get tapToSelectOrigin => '📍 اضغط على الخريطة لاختيار نقطة الانطلاق';
+
+  @override
+  String get tapToSelectDest => '📍 اضغط على الخريطة لاختيار الوجهة';
+
+  @override
+  String get noDirectRoute => 'لم يتم العثور على مسار حافلة مباشر.';
+
+  @override
+  String lineLabel(Object number) {
+    return 'خط $number';
+  }
+
+  @override
+  String stopsLabel(Object number) {
+    return '$number توقفات';
+  }
+
+  @override
+  String get newRoute => 'مسار جديد';
+
+  @override
+  String shareMessage(Object destination, Object line, Object origin) {
+    return 'مسار بصيرة: $origin ← $destination\nخط الحافلة: $line\nاطلع على المواعيد المباشرة في تطبيق بصيرة!';
+  }
+
+  @override
+  String everyXMin(Object minutes) {
+    return 'Every ${minutes}min';
+  }
+
+  @override
+  String linesLabel(Object lines) {
+    return 'Lines: $lines';
+  }
+
+  @override
+  String kmAway(Object distance) {
+    return '$distance km away';
+  }
+
+  @override
+  String get today => 'اليوم';
+
+  @override
+  String get yesterday => 'أمس';
+
+  @override
+  String daysAgo(Object days) {
+    return 'منذ $days أيام';
+  }
 }

@@ -51,6 +51,7 @@ class _BusLineCardState extends State<_BusLineCard> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final line = widget.line;
 
     return Card(
@@ -65,7 +66,7 @@ class _BusLineCardState extends State<_BusLineCard> {
               style: const TextStyle(fontWeight: FontWeight.w600),
             ),
             subtitle: Text(
-              'Every ${line.intervalMinutes}min \u00B7 ${line.startHour}:${line.startMinute.toString().padLeft(2, '0')} \u2013 ${line.endHour}:${line.endMinute.toString().padLeft(2, '0')}',
+              '${l10n.everyXMin(line.intervalMinutes.toString())} \u00B7 ${line.startHour}:${line.startMinute.toString().padLeft(2, '0')} \u2013 ${line.endHour}:${line.endMinute.toString().padLeft(2, '0')}',
               style: const TextStyle(fontSize: 13),
             ),
             trailing: Icon(_expanded ? Icons.expand_less_rounded : Icons.expand_more_rounded),
@@ -82,6 +83,7 @@ class _BusLineCardState extends State<_BusLineCard> {
   }
 
   Widget _buildNextDepartures() {
+    final l10n = AppLocalizations.of(context);
     final line = widget.line;
     final next = line.getNextDepartures(count: 5);
     final now = DateTime.now();
@@ -99,9 +101,9 @@ class _BusLineCardState extends State<_BusLineCard> {
             children: [
               Icon(Icons.schedule_rounded, size: 16, color: AppColors.primary),
               const SizedBox(width: 6),
-              const Text(
-                'Next Departures',
-                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+              Text(
+                l10n.nextDepartures,
+                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
               ),
             ],
           ),
@@ -110,7 +112,7 @@ class _BusLineCardState extends State<_BusLineCard> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Text(
-                'No more departures today',
+                l10n.noMoreDepartures,
                 style: TextStyle(color: AppColors.textSecondary),
               ),
             )
@@ -151,6 +153,7 @@ class _BusLineCardState extends State<_BusLineCard> {
   }
 
   Widget _buildStationList() {
+    final l10n = AppLocalizations.of(context);
     final line = widget.line;
     final code = widget.code;
 
@@ -163,9 +166,9 @@ class _BusLineCardState extends State<_BusLineCard> {
             children: [
               Icon(Icons.location_on_outlined, size: 16, color: AppColors.primary),
               const SizedBox(width: 6),
-              const Text(
-                'Stations',
-                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+              Text(
+                l10n.stations,
+                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
               ),
             ],
           ),

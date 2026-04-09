@@ -42,6 +42,8 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(l10n.myTrips),
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
         bottom: TabBar(
           controller: _tabController,
           labelColor: Colors.white,
@@ -79,10 +81,10 @@ class _FavoritesTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final favorites = ref.watch(favoritesProvider);
 
     if (favorites.isEmpty) {
-      final l10n = AppLocalizations.of(context);
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -146,7 +148,7 @@ class _FavoritesTab extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          'Line ${line.lineNumber}',
+                          l10n.lineLabel(line.lineNumber),
                           style: const TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
@@ -191,10 +193,10 @@ class _HistoryTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final history = ref.watch(tripHistoryProvider);
 
     if (history.isEmpty) {
-      final l10n = AppLocalizations.of(context);
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -227,7 +229,7 @@ class _HistoryTab extends ConsumerWidget {
             ),
             title: Text('${origin.nameForLocale(code)} \u2192 ${dest.nameForLocale(code)}'),
             subtitle: Text(
-              '${_formatDate(entry.date)}${entry.busLineUsed != null ? ' \u00B7 Line ${entry.busLineUsed}' : ''}',
+              '${_formatDate(entry.date, l10n)}${entry.busLineUsed != null ? ' \u00B7 ${l10n.lineLabel(entry.busLineUsed!)}' : ''}',
             ),
             onTap: () {
               Navigator.of(context).push(
@@ -245,12 +247,12 @@ class _HistoryTab extends ConsumerWidget {
     );
   }
 
-  String _formatDate(DateTime date) {
+  String _formatDate(DateTime date, AppLocalizations l10n) {
     final now = DateTime.now();
     final diff = now.difference(date);
-    if (diff.inDays == 0) return 'Today';
-    if (diff.inDays == 1) return 'Yesterday';
-    if (diff.inDays < 7) return '${diff.inDays} days ago';
+    if (diff.inDays == 0) return l10n.today;
+    if (diff.inDays == 1) return l10n.yesterday;
+    if (diff.inDays < 7) return l10n.daysAgo(diff.inDays.toString());
     return '${date.day}/${date.month}/${date.year}';
   }
 }

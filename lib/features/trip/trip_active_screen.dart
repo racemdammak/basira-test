@@ -128,9 +128,12 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
     final destination = allStations[trip.destinationId];
     if (origin == null || destination == null) return;
 
-    final message = 'Basira Route: ${origin.nameForLocale(code)} → ${destination.nameForLocale(code)}\n'
-        'Bus line: ${_getBusLine(trip) ?? 'N/A'}\n'
-        'Check live schedules at Basira app!';
+    final l10n = AppLocalizations.of(context);
+    final message = l10n.shareMessage(
+      origin.nameForLocale(code),
+      destination.nameForLocale(code),
+      _getBusLine(trip) ?? 'N/A',
+    );
 
     await Clipboard.setData(ClipboardData(text: message));
     if (mounted) {
@@ -268,52 +271,101 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      if (!_isBoarded)
-                        ElevatedButton.icon(
+                      if (!_isBoarded) ...[
+                        ElevatedButton(
                           onPressed: _startTrip,
-                          icon: const Icon(Icons.directions_bus, size: 28),
-                          label: Text(l10n.onTheBus, style: const TextStyle(fontSize: 18)),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.available,
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
                             minimumSize: const Size(double.infinity, 60),
                           ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.directions_bus, size: 28),
+                              const SizedBox(width: 12),
+                              Flexible(
+                                child: Text(
+                                  l10n.onTheBus,
+                                  style: const TextStyle(fontSize: 18),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      if (!_isBoarded) const SizedBox(height: 16),
-                      ElevatedButton.icon(
+                        const SizedBox(height: 16),
+                      ],
+                      ElevatedButton(
                         onPressed: _reportCrowd,
-                        icon: const Icon(Icons.report, size: 28),
-                        label: Text(l10n.busFull, style: const TextStyle(fontSize: 18)),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.full,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
                           minimumSize: const Size(double.infinity, 60),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.report, size: 28),
+                            const SizedBox(width: 12),
+                            Flexible(
+                              child: Text(
+                                l10n.busFull,
+                                style: const TextStyle(fontSize: 18),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(height: 16),
-                      ElevatedButton.icon(
+                      ElevatedButton(
                         onPressed: _reportDelay,
-                        icon: const Icon(Icons.access_time, size: 28),
-                        label: Text(l10n.reportDelay, style: const TextStyle(fontSize: 18)),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.orange,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
                           minimumSize: const Size(double.infinity, 60),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.access_time, size: 28),
+                            const SizedBox(width: 12),
+                            Flexible(
+                              child: Text(
+                                l10n.reportDelay,
+                                style: const TextStyle(fontSize: 18),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(height: 16),
-                      ElevatedButton.icon(
+                      ElevatedButton(
                         onPressed: _endTrip,
-                        icon: const Icon(Icons.close, size: 28),
-                        label: Text(l10n.endTrip, style: const TextStyle(fontSize: 18)),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryLight,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
                           minimumSize: const Size(double.infinity, 60),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.close, size: 28),
+                            const SizedBox(width: 12),
+                            Flexible(
+                              child: Text(
+                                l10n.endTrip,
+                                style: const TextStyle(fontSize: 18),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
