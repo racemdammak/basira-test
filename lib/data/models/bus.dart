@@ -1,3 +1,4 @@
+// Change back to latlong2!
 import 'package:latlong2/latlong.dart';
 
 class Bus {
@@ -7,6 +8,15 @@ class Bus {
   final int capacity;
   int currentOccupancy;
   LatLng currentPosition;
+  
+  // --- GPS Tracking Properties ---
+  double heading; 
+  int delayMinutes; 
+  String? nextStationId; 
+  String? nextStationName;
+  int remainingDistanceMeters;
+  int remainingTimeSeconds;
+
   final DateTime nextDeparture;
   final DateTime estimatedArrival;
   final bool rampAvailable;
@@ -19,6 +29,12 @@ class Bus {
     required this.capacity,
     required this.currentOccupancy,
     required this.currentPosition,
+    this.heading = 0.0,
+    this.delayMinutes = 0,
+    this.nextStationId,
+    this.nextStationName,
+    this.remainingDistanceMeters = 0,
+    this.remainingTimeSeconds = 0,
     required this.nextDeparture,
     required this.estimatedArrival,
     this.rampAvailable = false,
@@ -26,7 +42,6 @@ class Bus {
   });
 
   double get occupancyRatio => currentOccupancy / capacity;
-
   bool get isFull => currentOccupancy >= capacity;
 
   String get occupancyLabel {

@@ -8,7 +8,7 @@ import 'package:latlong2/latlong.dart' as ll2; // Prefix latlong2 to avoid confl
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../l10n/app_localizations.dart';
-
+import '../../data/models/bus.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/providers.dart';
 import '../../data/mock/stations_mock.dart';
@@ -148,7 +148,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     // Build markers
     final Set<gmaps.Marker> markers = {};
 
-    // Station markers
+    // 1. Station markers
     for (final station in allStations.values) {
       final isOrigin = station.id == _originId;
       final isDest = station.id == _destId;
@@ -171,14 +171,15 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               controller.animateCamera(gmaps.CameraUpdate.newLatLngZoom(_convertLatLng(station.coordinates), 15));
               HapticFeedback.lightImpact();
             } else {
-              _showStationDialog(context, station);
+              // Linked the new Station Details Bottom Sheet here!
+              _showStationDetails(station); 
             }
           },
         ),
       );
     }
 
-    // Add bus markers
+    // 2. Add bus markers
     if (busesAsync case AsyncData(:final value)) {
       for (final bus in value) {
         markers.add(
@@ -186,10 +187,11 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             markerId: gmaps.MarkerId(bus.id),
             position: _convertLatLng(bus.currentPosition),
             icon: gmaps.BitmapDescriptor.defaultMarkerWithHue(gmaps.BitmapDescriptor.hueYellow),
-            infoWindow: gmaps.InfoWindow(
-              title: '${l10n.nextBus} ${bus.lineNumber}',
-              snippet: bus.direction,
-            ),
+            rotation: bus.heading, // The icon will now rotate to face the road!
+            onTap: () {
+               // Linked the new Bus Details Bottom Sheet here!
+               _showBusDetails(bus);
+            },
           ),
         );
       }
@@ -471,6 +473,127 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  void _showBusDetails(Bus bus) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1A241D) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text('Line ${bus.lineNumber}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
+                const Spacer(),
+                if (bus.delayMinutes > 0)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(color: Colors.red.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
+                    child: Text('Delayed ${bus.delayMinutes} min', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 12)),
+                  )
+                else
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(color: Colors.green.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
+                    child: const Text('On Time', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 12)),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text('Heading to: ${bus.direction}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 24),
+            const Text('NEXT STOP', style: TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Icon(Icons.location_on, color: AppColors.primaryLight),
+                const SizedBox(width: 12),
+                Expanded(child: Text(bus.nextStationName ?? 'Calculating...', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text('${(bus.remainingTimeSeconds / 60).ceil()} min', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primary)),
+                    Text('${(bus.remainingDistanceMeters / 1000).toStringAsFixed(1)} km', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 32),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showStationDetails(dynamic station) {
+    final l10n = AppLocalizations.of(context);
+    final code = ref.read(localeStringProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    // Find all live buses heading to this station
+    final allBuses = ref.read(busesProvider).value ?? [];
+    final incomingBuses = allBuses.where((b) => b.nextStationId == station.id).toList()
+      ..sort((a, b) => a.remainingTimeSeconds.compareTo(b.remainingTimeSeconds));
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1A241D) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(station.nameForLocale(code), style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            Text('${l10n.linesLabel(station.lineNumbers.join(", "))}', style: const TextStyle(color: Colors.grey)),
+            const SizedBox(height: 24),
+            const Text('INCOMING BUSES', style: TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            if (incomingBuses.isEmpty)
+               const Text('No buses approaching currently.', style: TextStyle(fontStyle: FontStyle.italic))
+            else
+              ...incomingBuses.map((bus) => Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 40, height: 40,
+                      decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
+                      alignment: Alignment.center,
+                      child: Text(bus.lineNumber, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(child: Text(bus.direction, maxLines: 1, overflow: TextOverflow.ellipsis)),
+                    Text('${(bus.remainingTimeSeconds / 60).ceil()} min', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  ],
+                ),
+              )),
+            const SizedBox(height: 24),
+          ],
         ),
       ),
     );
