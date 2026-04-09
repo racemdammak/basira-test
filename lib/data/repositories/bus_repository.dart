@@ -1,86 +1,212 @@
+import 'dart:async';
+import 'dart:math';
 import 'package:latlong2/latlong.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart' as gmaps;
 
 import '../models/bus.dart';
 import '../models/bus_line.dart';
 import '../models/station.dart';
 import '../models/trip.dart';
 import '../services/csv_data_service.dart';
+import '../../core/services/directions_service.dart'; 
+import '../../core/utils/location_utils.dart'; 
 
 class BusRepository {
-  // In-memory buses that can be updated (e.g. crowd reports)
   final List<Bus> _liveBuses = [];
-  DateTime _lastRefresh = DateTime(0);
   final CsvDataService _dataService = CsvDataService.instance;
   bool _dataLoaded = false;
+  Timer? _simulationTimer;
 
   Future<void> _ensureDataLoaded() async {
     if (_dataLoaded) return;
     await _dataService.initialize();
     _dataLoaded = true;
+    _initializeLiveBuses();
+    
+    // Start the 5-second GPS Simulation Engine
+    _simulationTimer ??= Timer.periodic(const Duration(seconds: 3), (_) {
+      _simulateGpsMovement();
+    });
   }
 
-  /// Returns current live buses. Regenerates mock data if stale (>30s).
-  Future<List<Bus>> getBuses() async {
-    await _ensureDataLoaded();
-    if (DateTime.now().difference(_lastRefresh).inSeconds > 30) {
-      _liveBuses.clear();
-      _liveBuses.addAll(_generateLiveBuses());
-      _lastRefresh = DateTime.now();
-    }
-    return List.unmodifiable(_liveBuses);
-  }
-
-  List<Bus> _generateLiveBuses() {
-    final buses = <Bus>[];
+  void _initializeLiveBuses() {
+    _liveBuses.clear();
     final now = DateTime.now();
 
     for (final line in _dataService.allBusLines) {
-      var busIndex = 1;
-      for (final dep in line.getNextDepartures(count: 3)) {
-        final diffMin = dep.difference(now).inMinutes;
+      // FORCE SPAWN 3 buses per line regardless of the time of day
+      for (var busIndex = 1; busIndex <= 3; busIndex++) {
         final origin = _dataService.allStations[line.stationIds.first]!;
-        final dest = _dataService.allStations[line.stationIds.last]!;
-
-        // Simulate position: if bus has departed, interpolate
-        final LatLng pos = diffMin <= 0
-            ? LatLng(
-                origin.coordinates.latitude +
-                    (dest.coordinates.latitude - origin.coordinates.latitude) *
-                        (-diffMin / (line.stationIds.length * 5)).clamp(0.0, 1.0),
-                origin.coordinates.longitude +
-                    (dest.coordinates.longitude - origin.coordinates.longitude) *
-                        (-diffMin / (line.stationIds.length * 5)).clamp(0.0, 1.0),
-              )
-            : origin.coordinates;
-
         final occ = (line.lineNumber.hashCode + busIndex) % 40 + 20;
+        final fakeDeparture = now.add(Duration(minutes: busIndex * 15)); // Guarantee a schedule
 
-        buses.add(Bus(
+        _liveBuses.add(Bus(
           id: '${line.lineNumber}_$busIndex',
           lineNumber: line.lineNumber,
           direction: '${line.directionFrom} → ${line.directionTo}',
           capacity: 80,
           currentOccupancy: occ,
-          currentPosition: pos,
-          nextDeparture: dep,
-          estimatedArrival: dep.add(Duration(minutes: line.stationIds.length * 4)),
+          currentPosition: origin.coordinates,
+          nextStationId: line.stationIds.length > 1 ? line.stationIds[1] : null,
+          nextDeparture: fakeDeparture,
+          estimatedArrival: fakeDeparture.add(Duration(minutes: line.stationIds.length * 4)),
           rampAvailable: busIndex % 3 == 0,
           isLowFloor: busIndex % 2 == 0,
         ));
-        busIndex++;
+      }
+    }
+  }
+
+  // ─────── "SUMMON" BUS TO APPROACH USER ───────
+  void forceBusToApproach(String lineNumber, String targetStationId) {
+    final line = _dataService.allBusLines.firstWhere((l) => l.lineNumber == lineNumber);
+    final targetIdx = line.stationIds.indexOf(targetStationId);
+    final targetStation = _dataService.allStations[targetStationId]!;
+
+    try {
+      final bus = _liveBuses.firstWhere((b) => b.lineNumber == lineNumber);
+      
+      LatLng startPos;
+      if (targetIdx > 0) {
+        final previousStationId = line.stationIds[targetIdx - 1];
+        final previousStation = _dataService.allStations[previousStationId]!;
+        // Place it 85% of the way to your station so it arrives very soon
+        startPos = interpolate(previousStation.coordinates, targetStation.coordinates, 0.85);
+      } else {
+        // If you are at the very first station, just offset it slightly
+        startPos = LatLng(targetStation.coordinates.latitude - 0.003, targetStation.coordinates.longitude - 0.003);
+      }
+
+      bus.currentPosition = startPos;
+      bus.nextStationId = targetStationId;
+      
+      // CRITICAL FIX: We force a straight-line path to the origin. 
+      // If we let Google Directions route from a random interpolated GPS point, 
+      // it creates weird U-turns causing the bus to look like it's driving "away".
+      bus.pathPoints = [startPos, targetStation.coordinates];
+      bus.pathIndex = 0;
+      
+    } catch (_) {}
+  }
+
+  // ─────── THE GPS SIMULATION ENGINE ───────
+  void _simulateGpsMovement() {
+    if (_liveBuses.isEmpty) return;
+
+    // 1. REVERTED SPEED! (8.33 m/s = approx 30 km/h)
+    final double speedMetersPerSecond = 8.33; 
+    final double distanceToMove = speedMetersPerSecond * 5; // Distance covered in 5 seconds
+
+    for (var bus in _liveBuses) {
+      if (bus.nextStationId == null) continue;
+
+      final nextStation = _dataService.allStations[bus.nextStationId];
+      if (nextStation == null) continue;
+
+      // 2. Fetch the road curves if the bus doesn't know the path yet
+      if (bus.pathPoints == null) {
+        _fetchPathForBus(bus, nextStation.coordinates);
+        continue; // Wait for Google to return the road path
+      }
+
+      // 3. Drive the bus along the road curves
+      _moveBusAlongPath(bus, distanceToMove, nextStation);
+    }
+  }
+
+  Future<void> _fetchPathForBus(Bus bus, LatLng destination) async {
+    final route = await DirectionsService.instance.getRoute(
+      gmaps.LatLng(bus.currentPosition.latitude, bus.currentPosition.longitude),
+      gmaps.LatLng(destination.latitude, destination.longitude)
+    );
+    
+    if (route != null && route.points.isNotEmpty) {
+      bus.pathPoints = route.points.map((p) => LatLng(p.latitude, p.longitude)).toList();
+      bus.pathIndex = 0;
+    } else {
+      // Fallback: Straight line if API fails
+      bus.pathPoints = [bus.currentPosition, destination];
+      bus.pathIndex = 0;
+    }
+  }
+
+  void _moveBusAlongPath(Bus bus, double distanceToMove, Station nextStation) {
+    if (bus.pathPoints == null || bus.pathIndex >= bus.pathPoints!.length - 1) {
+      // Bus arrived at the station! Find the next one.
+      bus.currentPosition = nextStation.coordinates;
+      bus.pathPoints = null;
+      bus.pathIndex = 0;
+      _assignNextStation(bus);
+      return;
+    }
+
+    double remainingMove = distanceToMove;
+    
+    // Drive the bus across the polyline nodes
+    while (remainingMove > 0 && bus.pathIndex < bus.pathPoints!.length - 1) {
+      LatLng p1 = bus.currentPosition;
+      LatLng p2 = bus.pathPoints![bus.pathIndex + 1];
+      double dist = distanceBetween(p1, p2);
+
+      if (remainingMove >= dist) {
+        // Bus passed this node, snap to it and keep moving
+        remainingMove -= dist;
+        bus.pathIndex++;
+        bus.currentPosition = bus.pathPoints![bus.pathIndex];
+      } else {
+        // Bus is between two road nodes
+        double progress = remainingMove / dist;
+        bus.currentPosition = interpolate(p1, p2, progress);
+        
+        // Calculate the direction the bus is facing
+        bus.heading = _calculateHeading(p1, p2);
+        remainingMove = 0;
       }
     }
 
-    return buses;
+    // Update Live ETA
+    double distToNext = distanceBetween(bus.currentPosition, nextStation.coordinates);
+    bus.remainingDistanceMeters = distToNext.round();
+    bus.remainingTimeSeconds = (distToNext / 8.33).round(); // Fixed calculation to use the original speed
+    bus.nextStationName = nextStation.nameFr;
+  }
+
+  double _calculateHeading(LatLng start, LatLng end) {
+    final lat1 = start.latitude * pi / 180;
+    final lng1 = start.longitude * pi / 180;
+    final lat2 = end.latitude * pi / 180;
+    final lng2 = end.longitude * pi / 180;
+
+    final dLng = lng2 - lng1;
+    final y = sin(dLng) * cos(lat2);
+    final x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLng);
+    final bearing = atan2(y, x) * 180 / pi;
+    return (bearing + 360) % 360;
+  }
+
+  void _assignNextStation(Bus bus) {
+    final line = _dataService.allBusLines.firstWhere((l) => l.lineNumber == bus.lineNumber);
+    if (bus.nextStationId == null) return;
+    
+    final currentIndex = line.stationIds.indexOf(bus.nextStationId!);
+    if (currentIndex != -1 && currentIndex + 1 < line.stationIds.length) {
+      bus.nextStationId = line.stationIds[currentIndex + 1];
+    } else {
+      bus.nextStationId = null; 
+      bus.remainingDistanceMeters = 0;
+      bus.remainingTimeSeconds = 0;
+    }
+  }
+
+  // --- STANDARD GETTERS ---
+  Future<List<Bus>> getBuses() async {
+    await _ensureDataLoaded();
+    return List.unmodifiable(_liveBuses);
   }
 
   Future<Bus?> getBusById(String id) async {
-    final buses = await getBuses();
-    try {
-      return buses.firstWhere((b) => b.id == id);
-    } catch (_) {
-      return null;
-    }
+    await _ensureDataLoaded();
+    try { return _liveBuses.firstWhere((b) => b.id == id); } catch (_) { return null; }
   }
 
   Future<List<BusLine>> getBusLines() async {
@@ -101,38 +227,24 @@ class BusRepository {
   Future<List<Station>> searchStations(String query) async {
     await _ensureDataLoaded();
     final q = query.toLowerCase();
-    return _dataService.allStations.values.where((s) {
-      return s.nameFr.toLowerCase().contains(q) ||
-          s.nameAr.toLowerCase().contains(q) ||
-          s.nameTun.toLowerCase().contains(q) ||
-          s.id.contains(q);
-    }).toList();
+    return _dataService.allStations.values.where((s) =>
+      s.nameFr.toLowerCase().contains(q) || s.nameAr.toLowerCase().contains(q) || s.nameTun.toLowerCase().contains(q) || s.id.contains(q)
+    ).toList();
   }
 
-  /// Find a trip between origin and destination.
   Future<Trip?> findTrip(String originId, String destinationId) async {
     await _ensureDataLoaded();
     final origin = _dataService.allStations[originId];
-    final destination = _dataService.allStations[destinationId];
-    if (origin == null || destination == null) return null;
+    final dest = _dataService.allStations[destinationId];
+    if (origin == null || dest == null) return null;
 
     for (final line in _dataService.allBusLines) {
       final oi = line.stationIds.indexOf(originId);
       final di = line.stationIds.indexOf(destinationId);
       if (oi != -1 && di != -1 && oi < di) {
-        return Trip(
-          id: '${line.lineNumber}_trip',
-          origin: origin,
-          destination: destination,
-          sections: [
-            Section(
-              busLineNumber: line.lineNumber,
-              from: origin,
-              to: destination,
-              duration: Duration(minutes: (di - oi) * 5),
-            ),
-          ],
-        );
+        return Trip(id: '${line.lineNumber}_trip', origin: origin, destination: dest, sections: [
+            Section(busLineNumber: line.lineNumber, from: origin, to: dest, duration: Duration(minutes: (di - oi) * 5)),
+        ]);
       }
     }
     return null;
@@ -142,77 +254,21 @@ class BusRepository {
     await _ensureDataLoaded();
     final trip = await findTrip(originId, destinationId);
     if (trip == null) return [];
-
-    final buses = await getBuses();
-    return buses
-        .where((b) => trip.sections.any((s) => b.lineNumber == s.busLineNumber))
-        .toList()
-      ..sort((a, b) => a.nextDeparture.compareTo(b.nextDeparture));
+    return _liveBuses.where((b) => trip.sections.any((s) => b.lineNumber == s.busLineNumber)).toList()..sort((a, b) => a.nextDeparture.compareTo(b.nextDeparture));
   }
 
   Future<List<Trip>> findTripOptions(String originId, String destinationId) async {
     await _ensureDataLoaded();
     final trips = <Trip>[];
-
     for (final line in _dataService.allBusLines) {
       final oi = line.stationIds.indexOf(originId);
       final di = line.stationIds.indexOf(destinationId);
       if (oi != -1 && di != -1 && oi < di) {
-        final origin = _dataService.allStations[originId]!;
-        final destination = _dataService.allStations[destinationId]!;
-        trips.add(Trip(
-          id: '${line.lineNumber}_direct',
-          origin: origin,
-          destination: destination,
-          sections: [
-            Section(
-              busLineNumber: line.lineNumber,
-              from: origin,
-              to: destination,
-              duration: Duration(minutes: (di - oi) * 5),
-            ),
-          ],
-        ));
+        trips.add(Trip(id: '${line.lineNumber}_direct', origin: _dataService.allStations[originId]!, destination: _dataService.allStations[destinationId]!, sections: [
+          Section(busLineNumber: line.lineNumber, from: _dataService.allStations[originId]!, to: _dataService.allStations[destinationId]!, duration: Duration(minutes: (di - oi) * 5)),
+        ]));
       }
     }
-
-    for (final line1 in _dataService.allBusLines) {
-      final oi = line1.stationIds.indexOf(originId);
-      if (oi == -1) continue;
-
-      for (final transferId in line1.stationIds.skip(oi + 1)) {
-        for (final line2 in _dataService.allBusLines) {
-          if (line2.id == line1.id) continue;
-          final ti = line2.stationIds.indexOf(transferId);
-          final di = line2.stationIds.indexOf(destinationId);
-          if (ti != -1 && di != -1 && ti < di) {
-            final origin = _dataService.allStations[originId]!;
-            final transfer = _dataService.allStations[transferId]!;
-            final destination = _dataService.allStations[destinationId]!;
-            trips.add(Trip(
-              id: '${line1.lineNumber}_${line2.lineNumber}_transfer',
-              origin: origin,
-              destination: destination,
-              sections: [
-                Section(
-                  busLineNumber: line1.lineNumber,
-                  from: origin,
-                  to: transfer,
-                  duration: Duration(minutes: (ti - oi) * 5),
-                ),
-                Section(
-                  busLineNumber: line2.lineNumber,
-                  from: transfer,
-                  to: destination,
-                  duration: Duration(minutes: (di - ti) * 5),
-                ),
-              ],
-            ));
-          }
-        }
-      }
-    }
-
     return trips;
   }
 

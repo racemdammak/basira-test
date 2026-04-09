@@ -54,7 +54,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onTheBus => 'I\'m on the Bus';
 
   @override
-  String get busFull => 'This bus is full! (M3abiya)';
+  String get busFull => 'This bus is full!';
 
   @override
   String get routePlanned => 'Route Planned';

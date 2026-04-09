@@ -111,12 +111,17 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
     return showDialog<int>(context: context, builder: (_) => _DelayDialog());
   }
 
+  // --- THIS IS THE FIXED FUNCTION ---
   String? _getBusLine(ActiveTripState trip) {
     if (trip.originId == null || trip.destinationId == null) return null;
     for (final line in allBusLines) {
       final oi = line.stationIds.indexOf(trip.originId!);
       final di = line.stationIds.indexOf(trip.destinationId!);
-      if (oi != -1 && di != -1 && oi < di) return line.lineNumber;
+      
+      // Allow the app to find the line regardless of the direction of travel!
+      if (oi != -1 && di != -1 && oi != di) {
+        return line.lineNumber;
+      }
     }
     return null;
   }
@@ -137,7 +142,6 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
 
     await Clipboard.setData(ClipboardData(text: message));
     if (mounted) {
-      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.routeCopied)),
       );
@@ -214,29 +218,28 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
 
               const SizedBox(height: 12),
 
-              // Live tracking button (when boarded)
-              if (_isBoarded)
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => TripLiveScreen(
-                            originId: trip.originId!,
-                            destinationId: trip.destinationId!,
-                            busLine: _getBusLine(trip),
-                          ),
+              // Live tracking button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => TripLiveScreen(
+                          originId: trip.originId!,
+                          destinationId: trip.destinationId!,
+                          busLine: _getBusLine(trip),
                         ),
-                      );
-                    },
-                    icon: const Icon(Icons.location_on),
-                    label: Text(l10n.liveTracking),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.location_on),
+                  label: Text(l10n.liveTracking),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                 ),
+              ),
 
               const SizedBox(height: 12),
 

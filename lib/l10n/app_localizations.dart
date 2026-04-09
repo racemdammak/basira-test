@@ -195,7 +195,7 @@ abstract class AppLocalizations {
   /// No description provided for @busFull.
   ///
   /// In en, this message translates to:
-  /// **'This bus is full! (M3abiya)'**
+  /// **'This bus is full!'**
   String get busFull;
 
   /// No description provided for @routePlanned.

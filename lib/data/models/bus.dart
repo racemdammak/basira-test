@@ -1,4 +1,3 @@
-// Change back to latlong2!
 import 'package:latlong2/latlong.dart';
 
 class Bus {
@@ -16,6 +15,10 @@ class Bus {
   String? nextStationName;
   int remainingDistanceMeters;
   int remainingTimeSeconds;
+
+  // --- Road Pathing ---
+  List<LatLng>? pathPoints;
+  int pathIndex;
 
   final DateTime nextDeparture;
   final DateTime estimatedArrival;
@@ -35,6 +38,8 @@ class Bus {
     this.nextStationName,
     this.remainingDistanceMeters = 0,
     this.remainingTimeSeconds = 0,
+    this.pathPoints,
+    this.pathIndex = 0,
     required this.nextDeparture,
     required this.estimatedArrival,
     this.rampAvailable = false,

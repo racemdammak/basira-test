@@ -1,9 +1,15 @@
 id,lineNumber,directionFrom,directionTo,stationIds,startHour,startMinute,endHour,endMinute,intervalMinutes
-line_1,1,Nassria,Gare SNCFT,nassria|jabri|hached|place_15_novembre|centre_ville|bab_jedid|bab_bhar|gare_sncft,5,30,22,0,15
-line_2,2,Sfax Sud,Université,sfax_sud|cite_el_izdihar|hopital_habib_bourguiba|moussa_ibn_noussair|hay_riadh|cite_el_amal|hopital_hedi_chaker|universite,5,45,21,30,20
-line_4,4,Aéroport,Médina,aeroport|cite_el_habib|hopital_habib_bourguiba|route_tunis|place_15_novembre|centre_ville|medina,6,0,21,0,40
-line_5,5,Gremda,Université,gremda|hopital_habib_bourguiba|centre_ville|universite,6,15,20,30,30
-line_6,6,Sakiet Ezzit,Gare Routière,sakiet_ezzit|sakiet_eddaier|route_tunis|hached|gare_routiere,5,30,22,0,20
-line_10,10,Chihia,Gare SNCFT,chihia|sfax_sud|centre_ville|nassria|gare_sncft,5,40,21,40,25
-line_11,11,Teniour,Bab Bhar,teniour|gare_routiere|nassria|bab_bhar,6,0,21,0,30
-line_15,15,Hay Ennour,Centre Ville,hay_ennour|cite_boudrak|hay_riadh|hopital_hedi_chaker|centre_ville,6,0,21,30,30
+line_1,1,Centre Ville,Sakiet Ezzit,bab_bhar|centre_ville|route_tunis_km2|route_tunis_km4|sakiet_ezzit,5,30,22,0,15
+line_2,2,Centre Ville,Thyna,bab_bhar|hopital_hb|route_gabes_km3|sfax_sud|thyna,5,45,21,30,20
+line_3,3,Centre Ville,Sakiet Eddaier,centre_ville|gare_sncft|route_mahdia_km3|route_mahdia_km5|sakiet_eddaier,6,0,21,0,25
+line_4,4,Centre Ville,Aéroport,bab_bhar|hopital_hb|route_soukra_km3|aeroport,6,0,21,0,30
+line_5,5,Centre Ville,Gremda,centre_ville|nassria|route_gremda_km3|gremda,6,15,20,30,20
+line_6,6,Centre Ville,El Ain,centre_ville|hopital_hb|route_el_ain_km3|el_ain,5,30,22,0,25
+line_7,7,Centre Ville,Chihia,nassria|route_teniour_km3|chihia,5,40,21,40,20
+line_8,8,Centre Ville,M. Chaker,centre_ville|hopital_hb|m_chaker_km3|m_chaker_km6,6,0,21,0,30
+line_9,9,Centre Ville,Cité El Habib,bab_bhar|hopital_hb|cite_el_habib,5,30,22,30,15
+line_10,10,Centre Ville,Sidi Mansour,gare_sncft|route_mahdia_km3|sidi_mansour,6,0,20,0,35
+line_11,11,Nassria,Port Sfax,nassria|centre_ville|gare_sncft|port_sfax,6,30,19,30,40
+line_12,12,Sakiet Ezzit,Gremda (Rocade),sakiet_ezzit|chihia|gremda,6,0,20,0,30
+line_13,13,El Ain,Thyna (Rocade),el_ain|cite_el_habib|thyna,6,0,20,0,30
+line_14,14,Gare SNCFT,Hôpital,gare_sncft|bab_bhar|hopital_hb,5,0,23,0,10

@@ -15,7 +15,7 @@
   "busLines": "Bus Lines",
   "takeThisBus": "Take This Bus",
   "onTheBus": "I'm on the Bus",
-  "busFull": "This bus is full! (M3abiya)",
+  "busFull": "This bus is full!",
   "routePlanned": "Route Planned",
   "noBuses": "No buses available for this route right now",
   "tryAgainLater": "Try again later",

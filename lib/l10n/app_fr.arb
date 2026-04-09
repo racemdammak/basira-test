@@ -15,7 +15,7 @@
   "busLines": "Lignes de bus",
   "takeThisBus": "Prendre ce bus",
   "onTheBus": "Je suis dans le bus",
-  "busFull": "Ce bus est plein ! (M3abiya)",
+  "busFull": "Ce bus est plein !",
   "routePlanned": "Itinéraire planifié",
   "noBuses": "Aucun bus disponible pour cet itinéraire pour le moment",
   "tryAgainLater": "Réessayez plus tard",
