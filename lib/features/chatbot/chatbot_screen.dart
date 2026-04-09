@@ -458,6 +458,8 @@ class _ChatbotScreenState extends ConsumerState<ChatbotScreen> {
   Future<void> _sendMessage(WidgetRef ref, String text) async {
     final langCode = ref.read(languageCodeProvider);
 
+    print('Chatbot: Sending message: $text');
+
     ref.read(chatMessagesProvider.notifier).state = [
       ...ref.read(chatMessagesProvider),
       {'role': 'user', 'content': text},
@@ -467,6 +469,8 @@ class _ChatbotScreenState extends ConsumerState<ChatbotScreen> {
 
     final repo = ref.read(chatRepositoryProvider);
     final response = await repo.sendQuery(text, langCode);
+
+    print('Chatbot: Received response: $response');
 
     if (!mounted) return;
 

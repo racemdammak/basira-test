@@ -49,6 +49,7 @@ dependencies:
   gap: ^3.0.1
   flutter_dotenv: ^6.0.0
   shared_preferences: ^2.5.5
+  google_generative_ai: ^0.4.7
 
 dev_dependencies:
   flutter_test:
