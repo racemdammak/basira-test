@@ -1,8 +1,8 @@
-import '../../core/services/groq_service.dart';
+import '../../core/services/gemini_service.dart';
 import 'bus_repository.dart';
 
 class ChatRepository {
-  final GroqService _service = GroqService();
+  final GeminiService _service = GeminiService();
   final BusRepository _busRepository = BusRepository();
 
   Future<String> sendQuery(String userMessage, String languageCode) async {
