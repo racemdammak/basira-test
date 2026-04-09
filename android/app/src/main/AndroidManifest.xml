@@ -13,6 +13,9 @@
         android:label="basira"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data 
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAO244Zuo8FmQbI7WvGKQlfbRdB_-bmsNw" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

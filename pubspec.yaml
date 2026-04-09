@@ -50,6 +50,7 @@ dependencies:
   flutter_dotenv: ^6.0.0
   shared_preferences: ^2.5.5
   google_generative_ai: ^0.4.7
+  google_maps_flutter: ^2.17.0
 
 dev_dependencies:
   flutter_test:

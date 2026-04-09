@@ -3,8 +3,8 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart' as gmaps; 
+import 'package:latlong2/latlong.dart' as ll2; // Prefix latlong2 to avoid conflicts
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../l10n/app_localizations.dart';
@@ -26,14 +26,18 @@ class MapScreen extends ConsumerStatefulWidget {
 
 class _MapScreenState extends ConsumerState<MapScreen> {
   Timer? _updateTimer;
-  final MapController _mapController = MapController();
+  // Using Completer for Google Maps controller
+  final Completer<gmaps.GoogleMapController> _mapController = Completer<gmaps.GoogleMapController>();
 
   // Route planning state
   _MapMode _mode = _MapMode.normal;
   String? _originId;
   String? _destId;
-  LatLng? _userLocation;
+  gmaps.LatLng? _userLocation;
   bool _locationEnabled = false;
+
+  // Helper to convert latlong2 to Google Maps LatLng
+  gmaps.LatLng _convertLatLng(ll2.LatLng pos) => gmaps.LatLng(pos.latitude, pos.longitude);
 
   @override
   void initState() {
@@ -83,11 +87,12 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       );
 
       setState(() {
-        _userLocation = LatLng(position.latitude, position.longitude);
+        _userLocation = gmaps.LatLng(position.latitude, position.longitude);
         _locationEnabled = true;
       });
 
-      _mapController.move(_userLocation!, 16);
+      final controller = await _mapController.future;
+      controller.animateCamera(gmaps.CameraUpdate.newLatLngZoom(_userLocation!, 16));
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -131,22 +136,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     });
   }
 
-  void _resetRoute() {
-    _cancelRoutePlanning();
-  }
-
-  // ─────── Haversine distance ───────
-  double _distanceKm(LatLng a, LatLng b) {
-    const double R = 6371;
-    final dLat = _deg2rad(b.latitude - a.latitude);
-    final dLng = _deg2rad(b.longitude - a.longitude);
-    final x = sin(dLat / 2) * sin(dLat / 2) +
-        cos(_deg2rad(a.latitude)) * cos(_deg2rad(b.latitude)) *
-        sin(dLng / 2) * sin(dLng / 2);
-    return R * 2 * atan2(sqrt(x), sqrt(1 - x));
-  }
-
-  double _deg2rad(double deg) => deg * pi / 180;
+  void _resetRoute() => _cancelRoutePlanning();
 
   // ─────── Build ───────
   @override
@@ -156,91 +146,49 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Build markers
-    final markers = <Marker>[
-      // Station markers
-      ...allStations.values.map((station) {
-        final isOrigin = station.id == _originId;
-        final isDest = station.id == _destId;
-        final isOnRoute = _originId != null && _destId != null && _isStationOnRoute(station.id);
+    final Set<gmaps.Marker> markers = {};
 
-        final color = isOrigin ? AppColors.primary :
-                      isDest ? Colors.red :
-                      isOnRoute ? Colors.orange :
-                      null;
+    // Station markers
+    for (final station in allStations.values) {
+      final isOrigin = station.id == _originId;
+      final isDest = station.id == _destId;
+      final isOnRoute = _originId != null && _destId != null && _isStationOnRoute(station.id);
 
-        return Marker(
-          point: station.coordinates,
-          width: 40,
-          height: 40,
-          child: GestureDetector(
-            onTap: () async {
-              if (_mode != _MapMode.normal) {
-                await _onMapTap(station.id);
-                // Center map on the picked station
-                _mapController.move(station.coordinates, 15);
-                HapticFeedback.lightImpact();
-              } else {
-                _showStationDialog(context, station);
-              }
-            },
-            child: Icon(
-              Icons.location_on,
-              color: color ?? (isDark ? const Color(0xFF7CA971) : AppColors.primaryLight),
-              size: isOrigin || isDest ? 44 : 36,
-            ),
-          ),
-        );
-      }),
-      // User location marker
-      if (_userLocation != null && _locationEnabled)
-        Marker(
-          point: _userLocation!,
-          width: 24,
-          height: 24,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.blue,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 3),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.blue.withOpacity(0.4),
-                  blurRadius: 12,
-                  spreadRadius: 2,
-                ),
-              ],
-            ),
-          ),
+      final hue = isOrigin ? gmaps.BitmapDescriptor.hueGreen :
+                  isDest ? gmaps.BitmapDescriptor.hueRed :
+                  isOnRoute ? gmaps.BitmapDescriptor.hueOrange :
+                  gmaps.BitmapDescriptor.hueAzure;
+
+      markers.add(
+        gmaps.Marker(
+          markerId: gmaps.MarkerId(station.id),
+          position: _convertLatLng(station.coordinates),
+          icon: gmaps.BitmapDescriptor.defaultMarkerWithHue(hue),
+          onTap: () async {
+            if (_mode != _MapMode.normal) {
+              await _onMapTap(station.id);
+              final controller = await _mapController.future;
+              controller.animateCamera(gmaps.CameraUpdate.newLatLngZoom(_convertLatLng(station.coordinates), 15));
+              HapticFeedback.lightImpact();
+            } else {
+              _showStationDialog(context, station);
+            }
+          },
         ),
-    ];
+      );
+    }
 
     // Add bus markers
     if (busesAsync case AsyncData(:final value)) {
       for (final bus in value) {
         markers.add(
-          Marker(
-            point: bus.currentPosition,
-            width: 30,
-            height: 30,
-            child: Tooltip(
-              message: '${l10n.nextBus} ${bus.lineNumber} - ${bus.direction}',
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.accent,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: isDark ? const Color(0xFF121A14) : Colors.white, width: 2),
-                ),
-                child: Center(
-                  child: Text(
-                    bus.lineNumber,
-                    style: TextStyle(
-                      color: isDark ? const Color(0xFF121A14) : Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ),
+          gmaps.Marker(
+            markerId: gmaps.MarkerId(bus.id),
+            position: _convertLatLng(bus.currentPosition),
+            icon: gmaps.BitmapDescriptor.defaultMarkerWithHue(gmaps.BitmapDescriptor.hueYellow),
+            infoWindow: gmaps.InfoWindow(
+              title: '${l10n.nextBus} ${bus.lineNumber}',
+              snippet: bus.direction,
             ),
           ),
         );
@@ -248,9 +196,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     }
 
     // Build route polylines
-    final polylines = <Polyline>[];
+    final Set<gmaps.Polyline> polylines = {};
 
-    // Route line between origin and destination
     if (_originId != null && _destId != null) {
       final estimates = TravelTimeService().estimate(_originId!, _destId!);
       if (estimates.isNotEmpty) {
@@ -268,26 +215,19 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
         // Reverse if destination comes before origin
         final ids = oi < di ? line.stationIds.sublist(start, end + 1) : line.stationIds.sublist(start, end + 1).reversed.toList();
-        final points = ids.map((id) => allStations[id]!.coordinates).toList();
+        final points = ids.map((id) => _convertLatLng(allStations[id]!.coordinates)).toList();
 
         if (points.length > 1) {
-          polylines.add(Polyline(
+          polylines.add(gmaps.Polyline(
+            polylineId: const gmaps.PolylineId('route'),
             points: points,
-            strokeWidth: 5,
-            color: AppColors.primary,
-          ));
-
-          // Highlight the origin station area
-          polylines.add(Polyline(
-            points: [points.first, points.first],
-            strokeWidth: 1,
+            width: 5,
             color: AppColors.primary,
           ));
         }
       }
     }
 
-    // Determine what's shown in the instruction bar
     String? instruction;
     if (_mode == _MapMode.selectingOrigin) {
       instruction = l10n.tapToSelectOrigin;
@@ -298,22 +238,25 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Map
-          FlutterMap(
-            mapController: _mapController,
-            options: MapOptions(
-              initialCenter: const LatLng(34.7406, 10.7590),
-              initialZoom: 14,
+          // Google Maps Widget replacing FlutterMap
+          gmaps.GoogleMap(
+            initialCameraPosition: const gmaps.CameraPosition(
+              target: gmaps.LatLng(34.7406, 10.7590),
+              zoom: 14,
             ),
-            children: [
-              TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'com.basira.basira',
-              ),
-              MarkerLayer(markers: markers),
-              if (polylines.isNotEmpty) PolylineLayer(polylines: polylines),
-            ],
+            onMapCreated: (gmaps.GoogleMapController controller) {
+              if (!_mapController.isCompleted) {
+                 _mapController.complete(controller);
+              }
+            },
+            markers: markers,
+            polylines: polylines,
+            myLocationEnabled: true,
+            myLocationButtonEnabled: false,
+            zoomControlsEnabled: false,
+            mapToolbarEnabled: false,
           ),
+
           if (instruction != null)
             Positioned(
               top: MediaQuery.of(context).padding.top + 10,
@@ -361,7 +304,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               ),
             ),
 
-          // Selected stations info bar (when both picked)
           if (_originId != null && _destId != null)
             _buildEstimationBar(isDark),
 
@@ -372,7 +314,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Location button
                 FloatingActionButton(
                   heroTag: 'myLocation',
                   onPressed: _showMyLocation,
@@ -391,7 +332,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Plan trip / cancel button
                 if (_mode != _MapMode.normal)
                   FloatingActionButton(
                     heroTag: 'cancelRoute',
@@ -421,7 +361,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final estimates = TravelTimeService().estimate(_originId!, _destId!);
     final origin = allStations[_originId]!;
     final dest = allStations[_destId]!;
-    final localeCode = ref.watch(localeStringProvider);
+    final localeCode = ref.read(localeStringProvider);
     final originName = origin.nameForLocale(localeCode);
     final destName = dest.nameForLocale(localeCode);
 
@@ -455,7 +395,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Station names
                   Row(
                     children: [
                       Icon(Icons.trip_origin_rounded, size: 20, color: AppColors.primaryLight),
@@ -477,7 +416,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  // Estimates
                   if (estimates.isEmpty)
                     Text(l10n.noDirectRoute, style: const TextStyle(color: Colors.redAccent))
                   else
@@ -520,8 +458,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                           ],
                         ),
                       );
-                    }).toList(),
-                  // Reset button
+                    }),
                   Center(
                     child: TextButton.icon(
                       onPressed: _resetRoute,
@@ -539,7 +476,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     );
   }
 
-  // Check if a station is on the selected route
   bool _isStationOnRoute(String stationId) {
     if (_originId == null || _destId == null) return false;
     final estimates = TravelTimeService().estimate(_originId!, _destId!);
@@ -559,7 +495,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     return line.stationIds.sublist(start, end + 1).contains(stationId);
   }
 
-  // ─────── Station dialog ───────
   void _showStationDialog(BuildContext context, dynamic station) {
     final l10n = AppLocalizations.of(context);
     final code = ref.read(localeStringProvider);
