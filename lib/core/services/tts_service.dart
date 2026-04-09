@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_tts/flutter_tts.dart';
 
 // ignore_for_file: unnecessary_getters_setters
@@ -35,7 +36,23 @@ class TtsService {
     if (!_enabled) return;
     try {
       await _tts.setLanguage(_localeCode(locale));
+      
+      final completer = Completer<void>();
+      
+      _tts.setCompletionHandler(() {
+        if (!completer.isCompleted) completer.complete();
+      });
+      
+      _tts.setCancelHandler(() {
+        if (!completer.isCompleted) completer.complete();
+      });
+
+      _tts.setErrorHandler((_) {
+        if (!completer.isCompleted) completer.complete();
+      });
+
       await _tts.speak(text);
+      return completer.future;
     } catch (_) {
       // TTS may fail on missing voice — silently skip
     }

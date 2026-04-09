@@ -7,6 +7,7 @@ import '../data/models/station.dart';
 import '../core/services/tts_service.dart';
 import '../core/services/haptic_service.dart';
 import '../core/services/notification_service.dart';
+import '../core/services/stt_service.dart';
 
 const _keyDarkMode = 'dark_mode';
 
@@ -43,6 +44,7 @@ final chatRepositoryProvider = Provider<ChatRepository>((ref) => ChatRepository(
 final ttsServiceProvider = Provider<TtsService>((ref) => TtsService());
 final hapticServiceProvider = Provider<HapticService>((ref) => HapticService());
 final notificationServiceProvider = Provider<NotificationService>((ref) => NotificationService());
+final sttServiceProvider = Provider<SttService>((ref) => SttService());
 
 // Buses list
 final busesProvider = FutureProvider.autoDispose((ref) async {

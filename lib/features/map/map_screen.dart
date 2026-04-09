@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -313,36 +314,48 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               if (polylines.isNotEmpty) PolylineLayer(polylines: polylines),
             ],
           ),
-
-          // Top instruction bar (when in route planning mode)
           if (instruction != null)
             Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Material(
-                elevation: 4,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  color: isDark ? const Color(0xFF1C2A1F) : Colors.white,
-                  child: Row(
-                    children: [
-                      Icon(
-                        _mode == _MapMode.selectingOrigin ? Icons.my_location : Icons.pin_drop,
-                        color: AppColors.primary,
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          instruction,
-                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              top: MediaQuery.of(context).padding.top + 10,
+              left: 16,
+              right: 16,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(32),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(32),
+                      border: Border.all(color: Colors.white.withOpacity(0.2)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
                         ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: _cancelRoutePlanning,
-                      ),
-                    ],
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          _mode == _MapMode.selectingOrigin ? Icons.my_location : Icons.pin_drop,
+                          color: AppColors.primaryLight,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            instruction,
+                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close, size: 20),
+                          onPressed: _cancelRoutePlanning,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -354,8 +367,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
           // FABs
           Positioned(
-            right: 16,
-            bottom: 100,
+            right: 20,
+            bottom: (_originId != null && _destId != null) ? 280 : 40,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -363,30 +376,36 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 FloatingActionButton(
                   heroTag: 'myLocation',
                   onPressed: _showMyLocation,
-                  backgroundColor: isDark ? const Color(0xFF253528) : Colors.white,
-                  child: Icon(
-                    Icons.my_location,
-                    color: AppColors.primary,
-                    size: 26,
+                  backgroundColor: isDark ? Colors.white.withOpacity(0.1) : Colors.white,
+                  elevation: 10,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(32),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                      child: Icon(
+                        Icons.my_location,
+                        color: AppColors.primaryLight,
+                        size: 26,
+                      ),
+                    ),
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
                 // Plan trip / cancel button
                 if (_mode != _MapMode.normal)
                   FloatingActionButton(
                     heroTag: 'cancelRoute',
                     onPressed: _cancelRoutePlanning,
-                    backgroundColor: Colors.red,
+                    backgroundColor: Colors.red.withOpacity(0.8),
                     child: const Icon(Icons.close, color: Colors.white),
                   )
                 else
                   FloatingActionButton.extended(
                     heroTag: 'planTrip',
                     onPressed: _startRoutePlanning,
-                    label: Text(l10n.planTrip),
-                    icon: const Icon(Icons.route),
+                    label: Text(l10n.planTrip, style: const TextStyle(fontWeight: FontWeight.w800, letterSpacing: 1)),
+                    icon: const Icon(Icons.auto_awesome),
                     backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
                   ),
               ],
             ),
@@ -406,123 +425,113 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final destName = dest.nameForLocale(localeCode);
 
     return Positioned(
-      bottom: 0,
-      left: 0,
-      right: 0,
-      child: Material(
-        elevation: 8,
-        borderRadius: const BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24)),
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1C2A1F) : Colors.white,
-            borderRadius: const BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Station names
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: const BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.location_on, size: 18, color: Colors.white),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      originName,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                  ),
-                  const Icon(Icons.arrow_forward, color: AppColors.primary),
-                ],
+      bottom: 24,
+      left: 16,
+      right: 16,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(32),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.15),
+              blurRadius: 40,
+              offset: const Offset(0, 15),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(32),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.85),
+                borderRadius: BorderRadius.circular(32),
+                border: Border.all(color: Colors.white.withOpacity(0.2)),
               ),
-              const SizedBox(height: 4),
-              Row(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.pin_drop, size: 16, color: Colors.white),
+                  // Station names
+                  Row(
+                    children: [
+                      Icon(Icons.trip_origin_rounded, size: 20, color: AppColors.primaryLight),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          originName,
+                          style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+                        ),
+                      ),
+                      Icon(Icons.arrow_forward_rounded, color: AppColors.primaryLight.withOpacity(0.5)),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          destName,
+                          style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      destName,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              // Estimates
-              if (estimates.isEmpty)
-                const Text('No direct bus route found.', style: TextStyle(color: Colors.redAccent))
-              else
-                ...estimates.take(3).map((est) {
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF253528) : const Color(0xFFE8F3E5),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            'Line ${est.busLine}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13,
+                  const SizedBox(height: 20),
+                  // Estimates
+                  if (estimates.isEmpty)
+                    const Text('No direct bus route found.', style: TextStyle(color: Colors.redAccent))
+                  else
+                    ...estimates.take(2).map((est) {
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(color: AppColors.primary.withOpacity(0.1)),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                'Line ${est.busLine}',
+                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 12),
+                              ),
                             ),
-                          ),
+                            const Spacer(),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  '~${est.estimatedDuration.inMinutes} min',
+                                  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: AppColors.primaryLight),
+                                ),
+                                Text(
+                                  '${est.stops} stops',
+                                  style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : AppColors.textSecondary),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        const Spacer(),
-                        Text(
-                          '${est.stops} stops',
-                          style: TextStyle(
-                            color: isDark ? const Color(0xFFB0C4AE) : const Color(0xFF5A665D),
-                            fontSize: 13,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          '~${est.estimatedDuration.inMinutes} min',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      ],
+                      );
+                    }).toList(),
+                  // Reset button
+                  Center(
+                    child: TextButton.icon(
+                      onPressed: _resetRoute,
+                      icon: const Icon(Icons.refresh_rounded, size: 18),
+                      label: const Text('New Route', style: TextStyle(fontWeight: FontWeight.w700)),
+                      style: TextButton.styleFrom(foregroundColor: AppColors.primaryLight),
                     ),
-                  );
-                }).toList(),
-              const SizedBox(height: 4),
-              // Reset button
-              Center(
-                child: TextButton.icon(
-                  onPressed: _resetRoute,
-                  icon: const Icon(Icons.refresh, size: 18),
-                  label: const Text('Choose a different route'),
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

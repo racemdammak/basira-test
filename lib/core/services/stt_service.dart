@@ -4,6 +4,8 @@ import 'package:speech_to_text/speech_to_text.dart';
 class SttService {
   final SpeechToText _stt = SpeechToText();
   bool _initialized = false;
+  
+  void stop() => _stt.stop();
 
   Future<bool> _init() async {
     if (_initialized) return true;

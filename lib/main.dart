@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'l10n/app_localizations.dart';
 import 'core/providers.dart';
 import 'data/services/csv_data_service.dart';
+import 'core/constants/app_colors.dart';
 import 'features/home/home_screen.dart';
 
 void main() async {
@@ -83,74 +84,96 @@ class BasiraApp extends ConsumerWidget {
 
   ThemeData _buildThemeData({required Brightness brightness}) {
     final isDark = brightness == Brightness.dark;
+    final bgColor = isDark ? AppColors.backgroundDark : AppColors.background;
 
     return ThemeData(
       brightness: brightness,
+      scaffoldBackgroundColor: bgColor,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF335836),
+        seedColor: AppColors.primary,
         brightness: brightness,
+        surface: isDark ? const Color(0xFF121A14) : Colors.white,
       ),
       useMaterial3: true,
+      
+      // Kinetic Typography
+      textTheme: TextTheme(
+        headlineLarge: TextStyle(
+          fontWeight: FontWeight.w900,
+          letterSpacing: 1.2,
+          height: 1.2,
+          color: isDark ? Colors.white : AppColors.textPrimary,
+        ),
+        titleLarge: TextStyle(
+          fontWeight: FontWeight.w800,
+          letterSpacing: 0.5,
+          color: isDark ? Colors.white : AppColors.textPrimary,
+        ),
+        bodyMedium: TextStyle(
+          height: 1.6,
+          color: isDark ? Colors.white70 : AppColors.textSecondary,
+        ),
+      ),
+
       iconTheme: IconThemeData(
-        color: isDark ? const Color(0xFF7CA971) : const Color(0xFF335836),
+        color: isDark ? AppColors.primaryLight : AppColors.primary,
         size: 24,
       ),
+
       appBarTheme: AppBarTheme(
         elevation: 0,
         centerTitle: true,
-        backgroundColor: isDark ? const Color(0xFF1A2E1C) : const Color(0xFF335836),
-        foregroundColor: isDark ? const Color(0xFF7CA971) : Colors.white,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(16),
-          ),
-        ),
+        backgroundColor: Colors.transparent,
+        foregroundColor: isDark ? Colors.white : AppColors.textPrimary,
       ),
+
+      // Fluid Geometry
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(48, 48),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          elevation: 2,
+          shape: const StadiumBorder(),
+          elevation: 0,
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
         ),
       ),
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          minimumSize: const Size(48, 48),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-      ),
+
       cardTheme: CardThemeData(
-        elevation: 2,
-        color: isDark ? const Color(0xFF1E2E20) : Colors.white,
+        elevation: 0,
+        color: isDark ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.7),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(32),
+          side: BorderSide(color: Colors.white.withOpacity(0.2), width: 1),
         ),
         clipBehavior: Clip.antiAlias,
-        shadowColor: isDark ? const Color(0xFF0A0F0C) : const Color(0xFF335836).withOpacity(0.08),
       ),
+
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: isDark ? const Color(0xFF253528) : const Color(0xFFF5F0D6),
+        fillColor: isDark ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.1),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(32),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        hintStyle: TextStyle(
-          color: isDark ? const Color(0xFF6B8068) : Colors.grey.shade400,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(32),
+          borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
         ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(32),
+          borderSide: BorderSide(color: AppColors.primary.withOpacity(0.3)),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       ),
+
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(32),
         ),
-        elevation: 4,
+        elevation: 12,
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
       ),
-      scaffoldBackgroundColor: isDark ? const Color(0xFF121A14) : const Color(0xFFF5F0D6),
     );
   }
 }

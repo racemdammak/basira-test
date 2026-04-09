@@ -31,7 +31,7 @@ class HomeScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           l10n.appTitle,
-          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22),
+          style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontSize: 28),
         ),
         centerTitle: false,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.8),
@@ -45,9 +45,16 @@ class HomeScreen extends ConsumerWidget {
         actions: [
           IconButton(
             onPressed: () => Navigator.of(context).push(_settingsRoute(context)),
-            icon: CircleAvatar(
-              backgroundColor: AppColors.primary.withOpacity(0.1),
-              child: const Icon(Icons.settings_outlined, color: AppColors.primary, size: 20),
+            icon: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  color: Colors.white.withOpacity(0.1),
+                  child: Icon(Icons.settings_outlined, color: AppColors.primaryLight, size: 20),
+                ),
+              ),
             ),
           ),
           const SizedBox(width: 8),
@@ -71,12 +78,7 @@ class HomeScreen extends ConsumerWidget {
                 // --- Section Title ---
                 Text(
                   localeCode == 'ar' ? 'خدماتنا' : 'Services',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: -0.5,
-                    color: Theme.of(context).textTheme.titleLarge?.color,
-                  ),
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
                 
                 const SizedBox(height: 16),
@@ -148,56 +150,68 @@ class HomeScreen extends ConsumerWidget {
   Widget _buildModernHero(BuildContext context, String localeCode) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.primary, AppColors.primaryLight],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(32),
+        gradient: AppColors.primaryGradient,
+        borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          )
+            color: AppColors.primary.withOpacity(0.2),
+            blurRadius: 40,
+            offset: const Offset(0, 20),
+            spreadRadius: -10,
+          ),
         ],
       ),
-      child: Row(
+      child: Stack(
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  localeCode == 'ar' ? 'مرحباً بك' : 'Hello there!',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  localeCode == 'ar' ? 'بصيرة صفاقس' : 'Welcome to\nBasira Sfax',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 26,
-                    fontWeight: FontWeight.w900,
-                    height: 1.1,
-                  ),
-                ),
-              ],
-            ),
+          Positioned(
+            right: -20,
+            top: -20,
+            child: Icon(Icons.cloud_outlined, size: 120, color: Colors.white.withOpacity(0.1)),
           ),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              shape: BoxShape.circle,
-            ),
-            child: Image.asset('assets/icons/icon.png', width: 50, height: 50),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      localeCode == 'ar' ? 'مرحباً بك' : 'Hello there!',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.7),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      localeCode == 'ar' ? 'بصيرة صفاقس' : 'Welcome to\nBasira Sfax',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 32,
+                        fontWeight: FontWeight.w900,
+                        height: 1.1,
+                        letterSpacing: -1,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Hero(
+                tag: 'app_icon',
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white.withOpacity(0.2)),
+                  ),
+                  child: Image.asset('assets/icons/icon.png', width: 48, height: 48, errorBuilder: (_, __, ___) => const Icon(Icons.directions_bus, color: Colors.white, size: 40)),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -214,58 +228,63 @@ class HomeScreen extends ConsumerWidget {
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          HapticFeedback.lightImpact(); // vibration légère
-          onTap();
-        },
-        borderRadius: BorderRadius.circular(28),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: isAccent 
-                ? AppColors.primary 
-                : (isDark ? Colors.white.withOpacity(0.05) : Colors.white),
-            borderRadius: BorderRadius.circular(28),
-            border: Border.all(
-              color: isAccent
-                  ? Colors.transparent
-                  : (isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
-            ),
-            boxShadow: isDark
-                ? []
-                : [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    )
-                  ],
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+            blurRadius: 30,
+            offset: const Offset(0, 15),
+            spreadRadius: -10,
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center, // 🔥 CENTER VERTICALLY
-            crossAxisAlignment: CrossAxisAlignment.center, // 🔥 CENTER HORIZONTALLY
-            children: [
-              Icon(
-                icon,
-                size: 36, // 🔥 bigger for visibility
-                color: isAccent ? Colors.white : AppColors.primary,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                title,
-                textAlign: TextAlign.center, // 🔥 CENTER TEXT
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w800,
-                  color: isAccent
-                      ? Colors.white
-                      : (isDark ? Colors.white : Colors.black87),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(32),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Material(
+            color: isAccent 
+                ? AppColors.primary.withOpacity(0.9)
+                : (isDark ? Colors.white.withOpacity(0.08) : Colors.white.withOpacity(0.8)),
+            child: InkWell(
+              onTap: () {
+                HapticFeedback.lightImpact();
+                onTap();
+              },
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(32),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      icon,
+                      size: 42,
+                      color: isAccent ? Colors.white : AppColors.primaryLight,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.5,
+                        color: isAccent ? Colors.white : (isDark ? Colors.white : AppColors.textPrimary),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -281,41 +300,62 @@ class HomeScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(24),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(isDark ? 0.15 : 0.04),
+              blurRadius: 25,
+              offset: const Offset(0, 10),
+              spreadRadius: -5,
             ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(16),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(28),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+            child: Material(
+              color: isDark ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.7),
+              child: InkWell(
+                onTap: onTap,
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(28),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.15),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Icon(icon, color: AppColors.primaryLight, size: 26),
+                      ),
+                      const SizedBox(width: 20),
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.3,
+                          color: isDark ? Colors.white : AppColors.textPrimary,
+                        ),
+                      ),
+                      const Spacer(),
+                      Icon(Icons.chevron_right_rounded, size: 24, color: AppColors.primaryLight.withOpacity(0.5)),
+                    ],
+                  ),
                 ),
-                child: Icon(icon, color: AppColors.primary, size: 24),
               ),
-              const SizedBox(width: 16),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : Colors.black87,
-                ),
-              ),
-              const Spacer(),
-              Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.grey.withOpacity(0.5)),
-            ],
+            ),
           ),
         ),
       ),
