@@ -388,7 +388,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get minToDestination => 'min jusqu\'à destination';
 
   @override
-  String get tunisian => 'Tunisian';
+  String get tunisian => 'Tunisien';
 
   @override
   String get darkMode => 'Mode sombre';
@@ -479,4 +479,51 @@ class AppLocalizationsFr extends AppLocalizations {
   String daysAgo(Object days) {
     return 'il y a $days jours';
   }
+
+  @override
+  String get onTime => 'À l\'heure';
+
+  @override
+  String delayedMin(Object minutes) {
+    return 'En retard de $minutes min';
+  }
+
+  @override
+  String headingTo(Object direction) {
+    return 'Direction : $direction';
+  }
+
+  @override
+  String get nextStop => 'PROCHAIN ARRÊT';
+
+  @override
+  String get incomingBuses => 'BUS À L\'APPROCHE';
+
+  @override
+  String get noBusesApproaching => 'Aucun bus en approche pour le moment.';
+
+  @override
+  String legComplete(Object line) {
+    return 'Étape terminée ! Dirigez-vous vers le quai pour la ligne $line.';
+  }
+
+  @override
+  String get completeLegAndTransfer => 'Terminer l\'étape & transfert';
+
+  @override
+  String get calculating => 'Calcul en cours...';
+
+  @override
+  String get tapToSelect => 'Appuyez pour sélectionner';
+
+  @override
+  String lineAbbreviation(Object number) {
+    return 'L$number';
+  }
+
+  @override
+  String get minAbbreviation => 'min';
+
+  @override
+  String get kmAbbreviation => 'km';
 }

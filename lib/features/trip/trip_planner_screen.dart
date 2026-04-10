@@ -259,17 +259,20 @@ class _TripCardState extends ConsumerState<_TripCard> {
                     icon: const Icon(Icons.directions_bus_rounded, size: 20),
                     label: Text(l10n.takeThisBus),
                     onPressed: () {
-                      ref.read(activeTripProvider.notifier).state =
-                          ref.read(activeTripProvider).copyWith(
-                                originId: trip.origin.id,
-                                destinationId: trip.destination.id,
-                              );
+                      // FIXED: Using the new ActiveTripState constructor with the 'trip' object
+                      ref.read(activeTripProvider.notifier).state = ActiveTripState(
+                        trip: trip,
+                        currentLegIndex: 0,
+                        isBoarded: false,
+                      );
+                      
                       storage.addToHistory(TripHistoryEntry(
                         originId: trip.origin.id,
                         destinationId: trip.destination.id,
                         date: DateTime.now(),
                         busLineUsed: trip.sections.first.busLineNumber,
                       ));
+                      
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (_) => const TripActiveScreen(),

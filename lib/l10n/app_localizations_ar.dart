@@ -384,7 +384,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get minToDestination => 'دقيقة إلى الوجهة';
 
   @override
-  String get tunisian => 'Tunisian';
+  String get tunisian => 'تونسي';
 
   @override
   String get darkMode => 'الوضع المظلم';
@@ -448,17 +448,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String everyXMin(Object minutes) {
-    return 'Every ${minutes}min';
+    return 'كل $minutes دقيقة';
   }
 
   @override
   String linesLabel(Object lines) {
-    return 'Lines: $lines';
+    return 'الخطوط: $lines';
   }
 
   @override
   String kmAway(Object distance) {
-    return '$distance km away';
+    return 'على بعد $distance كم';
   }
 
   @override
@@ -471,4 +471,51 @@ class AppLocalizationsAr extends AppLocalizations {
   String daysAgo(Object days) {
     return 'منذ $days أيام';
   }
+
+  @override
+  String get onTime => 'في الموعد';
+
+  @override
+  String delayedMin(Object minutes) {
+    return 'متأخر $minutes دقيقة';
+  }
+
+  @override
+  String headingTo(Object direction) {
+    return 'متجه إلى: $direction';
+  }
+
+  @override
+  String get nextStop => 'المحطة القادمة';
+
+  @override
+  String get incomingBuses => 'الحافلات القادمة';
+
+  @override
+  String get noBusesApproaching => 'لا توجد حافلات قادمة حالياً.';
+
+  @override
+  String legComplete(Object line) {
+    return 'اكتملت المرحلة! توجه إلى الرصيف للخط $line.';
+  }
+
+  @override
+  String get completeLegAndTransfer => 'إكمال المرحلة والانتقال';
+
+  @override
+  String get calculating => 'جارِ الحساب...';
+
+  @override
+  String get tapToSelect => 'اضغط للاختيار';
+
+  @override
+  String lineAbbreviation(Object number) {
+    return 'خ $number';
+  }
+
+  @override
+  String get minAbbreviation => 'دق';
+
+  @override
+  String get kmAbbreviation => 'كم';
 }

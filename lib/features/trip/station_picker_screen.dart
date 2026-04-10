@@ -153,6 +153,7 @@ class _StationPickerScreenState extends ConsumerState<StationPickerScreen> {
     required TextEditingController controller,
     required VoidCallback onTap,
   }) {
+    final l10n = AppLocalizations.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -196,7 +197,7 @@ class _StationPickerScreenState extends ConsumerState<StationPickerScreen> {
                   Text(
                     station != null
                         ? station.nameForLocale(ref.read(localeStringProvider))
-                        : 'Tap to select',
+                        : l10n.tapToSelect,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: station != null ? FontWeight.w600 : FontWeight.normal,
@@ -306,7 +307,7 @@ class _StationPickerScreenState extends ConsumerState<StationPickerScreen> {
                           color: AppColors.primary.withOpacity(0.15),
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: Text('L$ln',
+                        child: Text(l10n.lineAbbreviation(ln),
                             style: const TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
@@ -497,7 +498,7 @@ class _StationSearchSheetState extends ConsumerState<_StationSearchSheet> {
                           return ListTile(
                             onTap: () => widget.onSelect(station),
                             title: Text(station.nameForLocale(code)),
-                            subtitle: Text('Lines: ${station.lineNumbers.join(", ")}'),
+                            subtitle: Text(l10n.linesLabel(station.lineNumbers.join(", "))),
                           );
                         },
                       ),
@@ -515,6 +516,7 @@ class _StationSearchSheetState extends ConsumerState<_StationSearchSheet> {
     _SuggestMode? suggestMode,
     String code,
   ) {
+    final l10n = AppLocalizations.of(context);
     return [
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -555,7 +557,7 @@ class _StationSearchSheetState extends ConsumerState<_StationSearchSheet> {
                       color: AppColors.primary.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: Text('L$ln',
+                    child: Text(l10n.lineAbbreviation(ln),
                         style: const TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.bold,

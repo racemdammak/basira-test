@@ -49,7 +49,6 @@ class BasiraApp extends ConsumerWidget {
         Locale('en'),
         Locale('ar'),
         Locale('fr'),
-        Locale('tun'),
       ],
       localizationsDelegates: [
         AppLocalizations.delegate,
@@ -58,13 +57,13 @@ class BasiraApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       localeResolutionCallback: (locale, supportedLocales) {
-        if (locale == null) return const Locale('en');
+        if (locale == null) return const Locale('ar');
         for (var supported in supportedLocales) {
           if (supported.languageCode == locale.languageCode) {
             return supported;
           }
         }
-        return const Locale('en');
+        return const Locale('ar');
       },
       theme: _buildThemeData(brightness: Brightness.light),
       darkTheme: _buildThemeData(brightness: Brightness.dark),

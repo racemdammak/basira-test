@@ -137,7 +137,7 @@ class _BusLineCardState extends State<_BusLineCard> {
                     ),
                   ),
                   child: Text(
-                    '${formatTime(dep)} ($mins min)',
+                    '${formatTime(dep)} ($mins ${l10n.minAbbreviation})',
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 13,

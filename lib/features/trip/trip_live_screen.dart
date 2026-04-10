@@ -271,13 +271,13 @@ class _TripLiveScreenState extends ConsumerState<TripLiveScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(color: Colors.red.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
-                            child: Text('Delayed ${trackedBus.delayMinutes} min', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 12)),
+                            child: Text(l10n.delayedMin(trackedBus.delayMinutes.toString()), style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 12)),
                           )
                         else
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(color: Colors.green.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
-                            child: const Text('On Time', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 12)),
+                            child: Text(l10n.onTime, style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 12)),
                           ),
                       ],
                     ),
@@ -316,7 +316,7 @@ class _TripLiveScreenState extends ConsumerState<TripLiveScreen> {
                                   style: const TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.bold)
                                 ),
                                 Text(
-                                  trackedBus.nextStationName ?? 'Calculating...',
+                                  trackedBus.nextStationName ?? l10n.calculating,
                                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                                   maxLines: 1, overflow: TextOverflow.ellipsis,
                                 ),
@@ -327,11 +327,11 @@ class _TripLiveScreenState extends ConsumerState<TripLiveScreen> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                '${(trackedBus.remainingTimeSeconds / 60).ceil()} min', 
+                                '${(trackedBus.remainingTimeSeconds / 60).ceil()} ${l10n.minAbbreviation}', 
                                 style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: AppColors.primary)
                               ),
                               Text(
-                                '${(trackedBus.remainingDistanceMeters / 1000).toStringAsFixed(1)} km', 
+                                '${(trackedBus.remainingDistanceMeters / 1000).toStringAsFixed(1)} ${l10n.kmAbbreviation}', 
                                 style: const TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.w600)
                               ),
                             ],

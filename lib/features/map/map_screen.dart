@@ -483,28 +483,33 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            // 1. Set the active trip in the global state
-                            ref.read(activeTripProvider.notifier).state =
-                                ref.read(activeTripProvider).copyWith(
-                                      originId: _originId,
-                                      destinationId: _destId,
-                                    );
+                          onPressed: () async {
+                            // Fetch the smart trip option (direct or transfer)
+                            final trips = await ref.read(busRepositoryProvider).findTripOptions(_originId!, _destId!);
                             
-                            // 2. Save it to their trip history
-                            ref.read(storageServiceProvider).addToHistory(TripHistoryEntry(
-                              originId: _originId!,
-                              destinationId: _destId!,
-                              date: DateTime.now(),
-                              busLineUsed: estimates.isNotEmpty ? estimates.first.busLine : null,
-                            ));
+                            if (trips.isNotEmpty) {
+                              // 1. Set the full multi-leg trip in the global state
+                              ref.read(activeTripProvider.notifier).state = ActiveTripState(
+                                trip: trips.first,
+                                currentLegIndex: 0,
+                                isBoarded: false,
+                              );
+                              
+                              // 2. Save history
+                              ref.read(storageServiceProvider).addToHistory(TripHistoryEntry(
+                                originId: _originId!,
+                                destinationId: _destId!,
+                                date: DateTime.now(),
+                                busLineUsed: trips.first.sections.first.busLineNumber,
+                              ));
 
-                            // 3. Navigate to the Live GPS Tracking screen
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const TripActiveScreen(),
-                              ),
-                            );
+                              // 3. Navigate
+                              if (context.mounted) {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (_) => const TripActiveScreen()),
+                                );
+                              }
+                            }
                           },
                           icon: const Icon(Icons.directions_bus_rounded, size: 18),
                           label: Text(l10n.takeThisBus, style: const TextStyle(fontWeight: FontWeight.w700)),
@@ -529,6 +534,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   }
 
   void _showBusDetails(Bus bus) {
+    final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showModalBottomSheet(
@@ -552,38 +558,38 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                     color: AppColors.primary,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text('Line ${bus.lineNumber}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: Text(l10n.lineLabel(bus.lineNumber), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
                 const Spacer(),
                 if (bus.delayMinutes > 0)
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(color: Colors.red.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
-                    child: Text('Delayed ${bus.delayMinutes} min', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 12)),
+                    child: Text(l10n.delayedMin(bus.delayMinutes.toString()), style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 12)),
                   )
                 else
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(color: Colors.green.withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
-                    child: const Text('On Time', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 12)),
+                    child: Text(l10n.onTime, style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 12)),
                   ),
               ],
             ),
             const SizedBox(height: 16),
-            Text('Heading to: ${bus.direction}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(l10n.headingTo(bus.direction), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 24),
-            const Text('NEXT STOP', style: TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.bold)),
+            Text(l10n.nextStop, style: const TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Row(
               children: [
                 const Icon(Icons.location_on, color: AppColors.primaryLight),
                 const SizedBox(width: 12),
-                Expanded(child: Text(bus.nextStationName ?? 'Calculating...', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
+                Expanded(child: Text(bus.nextStationName ?? l10n.calculating, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text('${(bus.remainingTimeSeconds / 60).ceil()} min', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primary)),
-                    Text('${(bus.remainingDistanceMeters / 1000).toStringAsFixed(1)} km', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                    Text('${(bus.remainingTimeSeconds / 60).ceil()} ${l10n.minAbbreviation}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primary)),
+                    Text('${(bus.remainingDistanceMeters / 1000).toStringAsFixed(1)} ${l10n.kmAbbreviation}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
                   ],
                 ),
               ],
@@ -602,48 +608,66 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     
     // Find all live buses heading to this station
     final allBuses = ref.read(busesProvider).value ?? [];
-    final incomingBuses = allBuses.where((b) => b.nextStationId == station.id).toList()
+    
+    // Filter buses heading to this station and distinct them by line number to avoid duplication
+    final seenLines = <String>{};
+    final incomingBuses = allBuses
+        .where((b) => b.nextStationId == station.id)
+        .toList()
       ..sort((a, b) => a.remainingTimeSeconds.compareTo(b.remainingTimeSeconds));
+    
+    final uniqueIncomingBuses = incomingBuses.where((bus) {
+      final key = '${bus.lineNumber}_${bus.direction}';
+      if (seenLines.contains(key)) return false;
+      seenLines.add(key);
+      return true;
+    }).toList();
 
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true, // Allow the sheet to be taller if needed
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
-        padding: const EdgeInsets.all(24),
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.7, // Cap height at 70% of screen
+        ),
+        padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF1A241D) : Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(station.nameForLocale(code), style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-            Text('${l10n.linesLabel(station.lineNumbers.join(", "))}', style: const TextStyle(color: Colors.grey)),
-            const SizedBox(height: 24),
-            const Text('INCOMING BUSES', style: TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
-            if (incomingBuses.isEmpty)
-               const Text('No buses approaching currently.', style: TextStyle(fontStyle: FontStyle.italic))
-            else
-              ...incomingBuses.map((bus) => Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 40, height: 40,
-                      decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
-                      alignment: Alignment.center,
-                      child: Text(bus.lineNumber, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(child: Text(bus.direction, maxLines: 1, overflow: TextOverflow.ellipsis)),
-                    Text('${(bus.remainingTimeSeconds / 60).ceil()} min', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  ],
-                ),
-              )),
-            const SizedBox(height: 24),
-          ],
+        child: SingleChildScrollView( // Make content scrollable to prevent overflow
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(station.nameForLocale(code), style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              Text(l10n.linesLabel(station.lineNumbers.join(", ")), style: const TextStyle(color: Colors.grey)),
+              const SizedBox(height: 24),
+              Text(l10n.incomingBuses, style: const TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 12),
+              if (uniqueIncomingBuses.isEmpty)
+                 Text(l10n.noBusesApproaching, style: const TextStyle(fontStyle: FontStyle.italic))
+              else
+                ...uniqueIncomingBuses.map((bus) => Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 40, height: 40,
+                        decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
+                        alignment: Alignment.center,
+                        child: Text(bus.lineNumber, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(child: Text(bus.direction, maxLines: 1, overflow: TextOverflow.ellipsis)),
+                      Text('${(bus.remainingTimeSeconds / 60).ceil()} ${l10n.minAbbreviation}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    ],
+                  ),
+                )),
+              const SizedBox(height: 32), // Add padding at bottom
+            ],
+          ),
         ),
       ),
     );

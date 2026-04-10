@@ -123,7 +123,7 @@
   "invalidTripData": "Données de trajet invalides",
   "arrivingAt": "Arrivée à",
   "minToDestination": "min jusqu'à destination",
-  "tunisien": "Tunisien",
+  "tunisian": "Tunisien",
   "darkMode": "Mode sombre",
   "darkModeSubtitle": "Basculer vers le thème sombre",
   "chatbotSubtitle": "Votre assistant éthéré pour le transport à Sfax",
@@ -147,5 +147,18 @@
   "kmAway": "{distance} km",
   "today": "Aujourd'hui",
   "yesterday": "Hier",
-  "daysAgo": "il y a {days} jours"
+  "daysAgo": "il y a {days} jours",
+  "onTime": "À l'heure",
+  "delayedMin": "En retard de {minutes} min",
+  "headingTo": "Direction : {direction}",
+  "nextStop": "PROCHAIN ARRÊT",
+  "incomingBuses": "BUS À L'APPROCHE",
+  "noBusesApproaching": "Aucun bus en approche pour le moment.",
+  "legComplete": "Étape terminée ! Dirigez-vous vers le quai pour la ligne {line}.",
+  "completeLegAndTransfer": "Terminer l'étape & transfert",
+  "calculating": "Calcul en cours...",
+  "tapToSelect": "Appuyez pour sélectionner",
+  "lineAbbreviation": "L{number}",
+  "minAbbreviation": "min",
+  "kmAbbreviation": "km"
 }

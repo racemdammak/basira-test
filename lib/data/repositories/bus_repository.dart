@@ -260,15 +260,73 @@ class BusRepository {
   Future<List<Trip>> findTripOptions(String originId, String destinationId) async {
     await _ensureDataLoaded();
     final trips = <Trip>[];
+
+    // 1. Search for DIRECT routes first
     for (final line in _dataService.allBusLines) {
       final oi = line.stationIds.indexOf(originId);
       final di = line.stationIds.indexOf(destinationId);
-      if (oi != -1 && di != -1 && oi < di) {
-        trips.add(Trip(id: '${line.lineNumber}_direct', origin: _dataService.allStations[originId]!, destination: _dataService.allStations[destinationId]!, sections: [
-          Section(busLineNumber: line.lineNumber, from: _dataService.allStations[originId]!, to: _dataService.allStations[destinationId]!, duration: Duration(minutes: (di - oi) * 5)),
-        ]));
+      if (oi != -1 && di != -1 && oi != di) {
+        trips.add(Trip(
+          id: '${line.lineNumber}_direct',
+          origin: _dataService.allStations[originId]!,
+          destination: _dataService.allStations[destinationId]!,
+          sections: [
+            Section(
+              busLineNumber: line.lineNumber,
+              from: _dataService.allStations[originId]!,
+              to: _dataService.allStations[destinationId]!,
+              duration: Duration(minutes: (di - oi).abs() * 5),
+            ),
+          ],
+        ));
       }
     }
+
+    if (trips.isNotEmpty) return trips; // Prefer direct if available
+
+    // 2. Search for 1-TRANSFER routes (Multi-leg)
+    for (final line1 in _dataService.allBusLines) {
+      final oi1 = line1.stationIds.indexOf(originId);
+      if (oi1 == -1) continue;
+
+      // Look at every station on Line 1 as a potential transfer point
+      for (int i = 0; i < line1.stationIds.length; i++) {
+        if (i == oi1) continue;
+        final transferId = line1.stationIds[i];
+
+        // Does Line 2 connect this transfer point to the destination?
+        for (final line2 in _dataService.allBusLines) {
+          if (line1.id == line2.id) continue;
+          final ti2 = line2.stationIds.indexOf(transferId);
+          final di2 = line2.stationIds.indexOf(destinationId);
+
+          if (ti2 != -1 && di2 != -1 && ti2 != di2) {
+            trips.add(Trip(
+              id: '${line1.lineNumber}_${line2.lineNumber}_transfer',
+              origin: _dataService.allStations[originId]!,
+              destination: _dataService.allStations[destinationId]!,
+              sections: [
+                Section(
+                  busLineNumber: line1.lineNumber,
+                  from: _dataService.allStations[originId]!,
+                  to: _dataService.allStations[transferId]!,
+                  duration: Duration(minutes: (i - oi1).abs() * 5),
+                ),
+                Section(
+                  busLineNumber: line2.lineNumber,
+                  from: _dataService.allStations[transferId]!,
+                  to: _dataService.allStations[destinationId]!,
+                  duration: Duration(minutes: (di2 - ti2).abs() * 5),
+                ),
+              ],
+            ));
+          }
+        }
+      }
+    }
+    
+    // Sort so the shortest journey is recommended first
+    trips.sort((a, b) => a.sections.length.compareTo(b.sections.length));
     return trips;
   }
 

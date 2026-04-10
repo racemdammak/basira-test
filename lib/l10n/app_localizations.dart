@@ -989,6 +989,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{days} days ago'**
   String daysAgo(Object days);
+
+  /// No description provided for @onTime.
+  ///
+  /// In en, this message translates to:
+  /// **'On Time'**
+  String get onTime;
+
+  /// No description provided for @delayedMin.
+  ///
+  /// In en, this message translates to:
+  /// **'Delayed {minutes} min'**
+  String delayedMin(Object minutes);
+
+  /// No description provided for @headingTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Heading to: {direction}'**
+  String headingTo(Object direction);
+
+  /// No description provided for @nextStop.
+  ///
+  /// In en, this message translates to:
+  /// **'NEXT STOP'**
+  String get nextStop;
+
+  /// No description provided for @incomingBuses.
+  ///
+  /// In en, this message translates to:
+  /// **'INCOMING BUSES'**
+  String get incomingBuses;
+
+  /// No description provided for @noBusesApproaching.
+  ///
+  /// In en, this message translates to:
+  /// **'No buses approaching currently.'**
+  String get noBusesApproaching;
+
+  /// No description provided for @legComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Leg complete! Walk to the platform for Line {line}.'**
+  String legComplete(Object line);
+
+  /// No description provided for @completeLegAndTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Leg & Transfer'**
+  String get completeLegAndTransfer;
+
+  /// No description provided for @calculating.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculating...'**
+  String get calculating;
+
+  /// No description provided for @tapToSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to select'**
+  String get tapToSelect;
+
+  /// No description provided for @lineAbbreviation.
+  ///
+  /// In en, this message translates to:
+  /// **'L{number}'**
+  String lineAbbreviation(Object number);
+
+  /// No description provided for @minAbbreviation.
+  ///
+  /// In en, this message translates to:
+  /// **'min'**
+  String get minAbbreviation;
+
+  /// No description provided for @kmAbbreviation.
+  ///
+  /// In en, this message translates to:
+  /// **'km'**
+  String get kmAbbreviation;
 }
 
 class _AppLocalizationsDelegate

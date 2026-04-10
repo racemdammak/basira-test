@@ -147,5 +147,18 @@
   "kmAway": "{distance} km away",
   "today": "Today",
   "yesterday": "Yesterday",
-  "daysAgo": "{days} days ago"
+  "daysAgo": "{days} days ago",
+  "onTime": "On Time",
+  "delayedMin": "Delayed {minutes} min",
+  "headingTo": "Heading to: {direction}",
+  "nextStop": "NEXT STOP",
+  "incomingBuses": "INCOMING BUSES",
+  "noBusesApproaching": "No buses approaching currently.",
+  "legComplete": "Leg complete! Walk to the platform for Line {line}.",
+  "completeLegAndTransfer": "Complete Leg & Transfer",
+  "calculating": "Calculating...",
+  "tapToSelect": "Tap to select",
+  "lineAbbreviation": "L{number}",
+  "minAbbreviation": "min",
+  "kmAbbreviation": "km"
 }

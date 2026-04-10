@@ -392,85 +392,129 @@ class AppLocalizationsTun extends AppLocalizations {
   String get darkModeSubtitle => 'بدّل للسمّاء المظلمة';
 
   @override
-  String get chatbotSubtitle => 'Your ethereal assistant for Sfax transit';
+  String get chatbotSubtitle => 'رفيقتك الذكية في نقل صفاقس';
 
   @override
-  String get stopTalking => 'Stop talking';
+  String get stopTalking => 'يزي مالكلام';
 
   @override
-  String get quickQuestions => 'Quick Questions';
+  String get quickQuestions => 'أسئلة سريعة';
 
   @override
-  String get suggestedQuestion1 => '⏰ When is the next bus?';
+  String get suggestedQuestion1 => '⏰ وقتاش الكار الجاية؟';
 
   @override
-  String get suggestedQuestion2 => '♿ Which buses have ramps?';
+  String get suggestedQuestion2 => '♿ أنا كارات فيهم رامي؟';
 
   @override
-  String get suggestedQuestion3 => '🎫 How much is a ticket?';
+  String get suggestedQuestion3 => '🎫 قداش تذكرة الكار؟';
 
   @override
-  String get suggestedQuestion4 => '📅 Bus lines schedule';
+  String get suggestedQuestion4 => '📅 أوقات خطوط الكارات';
 
   @override
-  String get poweredBy => 'Powered by SORETRAS Sfax';
+  String get poweredBy => 'مدعوم من سورتاس صفاقس';
 
   @override
-  String get enableLocationText =>
-      'Please enable location services in your device settings.';
+  String get enableLocationText => 'فضّل فعّل الموقع في إعدادات تليفونك.';
 
   @override
-  String get tapToSelectOrigin =>
-      '📍 Tap the map to select your origin station';
+  String get tapToSelectOrigin => '📍 انزل عالخريطة باش تختار منين تبدا';
 
   @override
-  String get tapToSelectDest =>
-      '📍 Tap the map to select your destination station';
+  String get tapToSelectDest => '📍 انزل عالخريطة باش تختار وين تمشي';
 
   @override
-  String get noDirectRoute => 'No direct bus route found.';
+  String get noDirectRoute => 'ما لقيتش مسار كار مباشر.';
 
   @override
   String lineLabel(Object number) {
-    return 'Line $number';
+    return 'خط $number';
   }
 
   @override
   String stopsLabel(Object number) {
-    return '$number stops';
+    return '$number محطات';
   }
 
   @override
-  String get newRoute => 'New Route';
+  String get newRoute => 'مسار جديد';
 
   @override
   String shareMessage(Object destination, Object line, Object origin) {
-    return 'Basira Route: $origin → $destination\nBus line: $line\nCheck live schedules at Basira app!';
+    return 'مسار بصيرة: $origin ← $destination\nخط الكار: $line\nشوف المواعيد لايف في تطبيق بصيرة!';
   }
 
   @override
   String everyXMin(Object minutes) {
-    return 'Every ${minutes}min';
+    return 'كل $minutes دق';
   }
 
   @override
   String linesLabel(Object lines) {
-    return 'Lines: $lines';
+    return 'الخطوط: $lines';
   }
 
   @override
   String kmAway(Object distance) {
-    return '$distance km away';
+    return 'بعد $distance كم';
   }
 
   @override
-  String get today => 'Today';
+  String get today => 'اليوم';
 
   @override
-  String get yesterday => 'Yesterday';
+  String get yesterday => 'البارح';
 
   @override
   String daysAgo(Object days) {
-    return '$days days ago';
+    return 'عندها $days أيام';
   }
+
+  @override
+  String get onTime => 'في الوقت';
+
+  @override
+  String delayedMin(Object minutes) {
+    return 'موخر $minutes دق';
+  }
+
+  @override
+  String headingTo(Object direction) {
+    return 'ماشي لـ: $direction';
+  }
+
+  @override
+  String get nextStop => 'المحطة الجاية';
+
+  @override
+  String get incomingBuses => 'كارات جايين';
+
+  @override
+  String get noBusesApproaching => 'ما فماش كارات جايين التواتة.';
+
+  @override
+  String legComplete(Object line) {
+    return 'المرحلة كملت! روح للرصيف للخط $line.';
+  }
+
+  @override
+  String get completeLegAndTransfer => 'كمّل وبدّل';
+
+  @override
+  String get calculating => 'قاعد يحسب...';
+
+  @override
+  String get tapToSelect => 'انزل باش تختار';
+
+  @override
+  String lineAbbreviation(Object number) {
+    return 'خ $number';
+  }
+
+  @override
+  String get minAbbreviation => 'دق';
+
+  @override
+  String get kmAbbreviation => 'كم';
 }

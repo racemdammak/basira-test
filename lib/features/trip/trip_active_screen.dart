@@ -21,33 +21,30 @@ class TripActiveScreen extends ConsumerStatefulWidget {
 }
 
 class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
-  bool _isBoarded = false;
   Timer? _tripTimer;
   int _elapsedSeconds = 0;
 
   @override
   void initState() {
     super.initState();
-    _tripTimer = Timer.periodic(const Duration(seconds: 5), _checkTripEvents);
+    _tripTimer = Timer.periodic(const Duration(seconds: 3), _checkTripEvents);
   }
 
   @override
   void dispose() {
     _tripTimer?.cancel();
-    ref.read(activeTripProvider.notifier).state = const ActiveTripState();
-    ref.read(notificationServiceProvider).cancelAll();
     super.dispose();
   }
 
   void _checkTripEvents(Timer timer) {
     if (!mounted) return;
-    _elapsedSeconds += 5;
+    _elapsedSeconds += 3;
     final trip = ref.read(activeTripProvider);
     if (!trip.isActive) return;
 
-    if (_elapsedSeconds == 60 && !_isBoarded) {
+    if (_elapsedSeconds == 60 && !trip.isBoarded) {
       _triggerNotification(HapticPattern.busApproaching, localeKey: 'busApproaching');
-    } else if (_elapsedSeconds == 120 && !_isBoarded) {
+    } else if (_elapsedSeconds == 120 && !trip.isBoarded) {
       _triggerNotification(HapticPattern.busArrived, localeKey: 'busArrived');
     }
   }
@@ -72,7 +69,6 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
   }
 
   Future<void> _startTrip() async {
-    setState(() => _isBoarded = true);
     ref.read(activeTripProvider.notifier).state = ref.read(activeTripProvider).copyWith(
       isBoarded: true,
       startTime: DateTime.now(),
@@ -82,7 +78,8 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
 
   Future<void> _reportCrowd() async {
     final trip = ref.read(activeTripProvider);
-    await ref.read(busRepositoryProvider).reportCrowd(trip.busId ?? 'unknown', 76);
+    // FIXED: Uses trip.busLine instead of the old trip.busId
+    await ref.read(busRepositoryProvider).reportCrowd(trip.busLine ?? 'unknown', 76);
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context).crowdReportSent)),
@@ -95,7 +92,8 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
     if (minute != null && mounted) {
       final trip = ref.read(activeTripProvider);
       ref.read(storageServiceProvider).addDelayReport(DelayReport(
-        busLine: _getBusLine(trip) ?? 'unknown',
+        // FIXED: Uses trip.busLine
+        busLine: trip.busLine ?? 'unknown',
         stationId: trip.originId ?? '',
         delayMinutes: minute,
         timestamp: DateTime.now(),
@@ -111,21 +109,6 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
     return showDialog<int>(context: context, builder: (_) => _DelayDialog());
   }
 
-  // --- THIS IS THE FIXED FUNCTION ---
-  String? _getBusLine(ActiveTripState trip) {
-    if (trip.originId == null || trip.destinationId == null) return null;
-    for (final line in allBusLines) {
-      final oi = line.stationIds.indexOf(trip.originId!);
-      final di = line.stationIds.indexOf(trip.destinationId!);
-      
-      // Allow the app to find the line regardless of the direction of travel!
-      if (oi != -1 && di != -1 && oi != di) {
-        return line.lineNumber;
-      }
-    }
-    return null;
-  }
-
   Future<void> _shareTrip() async {
     final trip = ref.read(activeTripProvider);
     final code = ref.read(localeStringProvider);
@@ -137,7 +120,7 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
     final message = l10n.shareMessage(
       origin.nameForLocale(code),
       destination.nameForLocale(code),
-      _getBusLine(trip) ?? 'N/A',
+      trip.busLine ?? 'N/A', // FIXED
     );
 
     await Clipboard.setData(ClipboardData(text: message));
@@ -149,9 +132,25 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
   }
 
   Future<void> _endTrip() async {
-    ref.read(activeTripProvider.notifier).state = const ActiveTripState();
-    ref.read(notificationServiceProvider).cancelAll();
-    if (mounted) Navigator.of(context).pop();
+    final l10n = AppLocalizations.of(context);
+    final tripState = ref.read(activeTripProvider);
+    
+    if (!tripState.isLastLeg) {
+      // Advance to the next transfer leg!
+      ref.read(activeTripProvider.notifier).state = tripState.copyWith(
+        currentLegIndex: tripState.currentLegIndex + 1,
+        isBoarded: false, 
+      );
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.legComplete(ref.read(activeTripProvider).busLine ?? '?'))),
+      );
+    } else {
+      // Fully arrived at final destination
+      ref.read(activeTripProvider.notifier).state = const ActiveTripState();
+      ref.read(notificationServiceProvider).cancelAll();
+      if (mounted) Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -180,7 +179,6 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              // Route summary
               if (origin != null && destination != null)
                 Card(
                   child: Padding(
@@ -218,7 +216,6 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
 
               const SizedBox(height: 12),
 
-              // Live tracking button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
@@ -228,7 +225,7 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
                         builder: (_) => TripLiveScreen(
                           originId: trip.originId!,
                           destinationId: trip.destinationId!,
-                          busLine: _getBusLine(trip),
+                          busLine: trip.busLine, // FIXED
                         ),
                       ),
                     );
@@ -243,20 +240,19 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
 
               const SizedBox(height: 12),
 
-              // Trip status
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(
                     children: [
                       Icon(
-                        _isBoarded ? Icons.directions_bus : Icons.hourglass_empty,
+                        trip.isBoarded ? Icons.directions_bus : Icons.hourglass_empty,
                         size: 48,
-                        color: _isBoarded ? AppColors.available : AppColors.crowded,
+                        color: trip.isBoarded ? AppColors.available : AppColors.crowded,
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        _isBoarded ? l10n.onBus : l10n.waitingForBus,
+                        trip.isBoarded ? l10n.onBus : l10n.waitingForBus,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -269,12 +265,11 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
 
               const SizedBox(height: 16),
 
-              // Action buttons
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      if (!_isBoarded) ...[
+                      if (!trip.isBoarded) ...[
                         ElevatedButton(
                           onPressed: _startTrip,
                           style: ElevatedButton.styleFrom(
@@ -351,7 +346,7 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
                       ElevatedButton(
                         onPressed: _endTrip,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryLight,
+                          backgroundColor: trip.isLastLeg ? AppColors.primaryLight : Colors.blue,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
                           minimumSize: const Size(double.infinity, 60),
@@ -359,11 +354,11 @@ class _TripActiveScreenState extends ConsumerState<TripActiveScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.close, size: 28),
+                            Icon(trip.isLastLeg ? Icons.close : Icons.transfer_within_a_station, size: 28),
                             const SizedBox(width: 12),
                             Flexible(
                               child: Text(
-                                l10n.endTrip,
+                                trip.isLastLeg ? l10n.endTrip : l10n.completeLegAndTransfer,
                                 style: const TextStyle(fontSize: 18),
                                 overflow: TextOverflow.ellipsis,
                               ),

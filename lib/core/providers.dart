@@ -8,12 +8,13 @@ import '../core/services/tts_service.dart';
 import '../core/services/haptic_service.dart';
 import '../core/services/notification_service.dart';
 import '../core/services/stt_service.dart';
+import '../data/models/trip.dart';
 
 const _keyDarkMode = 'dark_mode';
 
 // Locale provider
 final localeProvider = StateProvider<Locale>((ref) {
-  return const Locale('en');
+  return const Locale('ar');
 });
 
 // Language code helper
@@ -106,39 +107,44 @@ final stationSearchProvider = FutureProvider.family.autoDispose<List<Station>, S
 final chatMessagesProvider = StateProvider<List<Map<String, String>>>((ref) => []);
 final chatIsLoadingProvider = StateProvider<bool>((ref) => false);
 
-// Active trip state
+// Active trip state for Multi-leg journeys
 class ActiveTripState {
-  final String? busId;
-  final String? originId;
-  final String? destinationId;
+  final Trip? trip;
+  final int currentLegIndex;
   final bool isBoarded;
   final DateTime? startTime;
 
   const ActiveTripState({
-    this.busId,
-    this.originId,
-    this.destinationId,
+    this.trip,
+    this.currentLegIndex = 0,
     this.isBoarded = false,
     this.startTime,
   });
 
   ActiveTripState copyWith({
-    String? busId,
-    String? originId,
-    String? destinationId,
+    Trip? trip,
+    int? currentLegIndex,
     bool? isBoarded,
     DateTime? startTime,
   }) {
     return ActiveTripState(
-      busId: busId ?? this.busId,
-      originId: originId ?? this.originId,
-      destinationId: destinationId ?? this.destinationId,
+      trip: trip ?? this.trip,
+      currentLegIndex: currentLegIndex ?? this.currentLegIndex,
       isBoarded: isBoarded ?? this.isBoarded,
       startTime: startTime ?? this.startTime,
     );
   }
 
-  bool get isActive => busId != null && destinationId != null;
+  bool get isActive => trip != null;
+  
+  // Helpers to get the current active leg of the journey
+  Section? get currentSection => trip != null && currentLegIndex < trip!.sections.length ? trip!.sections[currentLegIndex] : null;
+  bool get isLastLeg => trip != null && currentLegIndex == trip!.sections.length - 1;
+  
+  String? get originId => currentSection?.from.id;
+  String? get destinationId => currentSection?.to.id;
+  String? get busLine => currentSection?.busLineNumber;
+  String? get finalDestinationId => trip?.destination.id;
 }
 
 final activeTripProvider = StateProvider<ActiveTripState>((ref) {

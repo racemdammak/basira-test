@@ -475,4 +475,51 @@ class AppLocalizationsEn extends AppLocalizations {
   String daysAgo(Object days) {
     return '$days days ago';
   }
+
+  @override
+  String get onTime => 'On Time';
+
+  @override
+  String delayedMin(Object minutes) {
+    return 'Delayed $minutes min';
+  }
+
+  @override
+  String headingTo(Object direction) {
+    return 'Heading to: $direction';
+  }
+
+  @override
+  String get nextStop => 'NEXT STOP';
+
+  @override
+  String get incomingBuses => 'INCOMING BUSES';
+
+  @override
+  String get noBusesApproaching => 'No buses approaching currently.';
+
+  @override
+  String legComplete(Object line) {
+    return 'Leg complete! Walk to the platform for Line $line.';
+  }
+
+  @override
+  String get completeLegAndTransfer => 'Complete Leg & Transfer';
+
+  @override
+  String get calculating => 'Calculating...';
+
+  @override
+  String get tapToSelect => 'Tap to select';
+
+  @override
+  String lineAbbreviation(Object number) {
+    return 'L$number';
+  }
+
+  @override
+  String get minAbbreviation => 'min';
+
+  @override
+  String get kmAbbreviation => 'km';
 }
