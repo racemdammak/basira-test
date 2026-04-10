@@ -4,7 +4,10 @@ import '../../l10n/app_localizations.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/providers.dart';
+import '../../core/services/tts_service.dart';
+
 import '../about/about_screen.dart';
+import '../home/blind_home_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -18,6 +21,7 @@ class SettingsScreen extends ConsumerWidget {
     final hapticsEnabled = ref.watch(hapticsEnabledProvider);
     final darkMode = ref.watch(darkModeProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isBlindMode = ref.watch(blindModeProvider);
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -27,6 +31,29 @@ class SettingsScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // Accessibility / Blind Mode
+          Card(
+            child: SwitchListTile(
+              title: Text(l10n.blindModeTitle),
+              subtitle: Text(l10n.blindModeSubtitle),
+              secondary: const Icon(Icons.blind, size: 28),
+              activeColor: AppColors.primary,
+              value: isBlindMode,
+              onChanged: (value) {
+                ref.read(blindModeProvider.notifier).setBlindMode(value);
+                final locale = ref.read(localeStringProvider);
+                if (value) {
+                  ref.read(ttsServiceProvider).speak(l10n.blindModeEnabled, locale: locale);
+                } else {
+                  ref.read(ttsServiceProvider).speak(l10n.blindModeDisabled, locale: locale);
+                }
+              },
+            ),
+          ),
+
+
+          const SizedBox(height: 12),
+
           // Language
           Card(
             child: Padding(
@@ -46,12 +73,14 @@ class SettingsScreen extends ConsumerWidget {
                       _langChip(l10n.english, 'en', currentLocale, ref, isDark),
                       _langChip(l10n.arabic, 'ar', currentLocale, ref, isDark),
                       _langChip(l10n.french, 'fr', currentLocale, ref, isDark),
+
                     ],
                   ),
                 ],
               ),
             ),
           ),
+
 
           const SizedBox(height: 12),
 

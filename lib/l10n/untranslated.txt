@@ -1,1 +1,8 @@
-{}
+{
+  "tun": [
+    "blindModeTitle",
+    "blindModeSubtitle",
+    "blindModeEnabled",
+    "blindModeDisabled"
+  ]
+}

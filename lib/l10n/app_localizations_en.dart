@@ -522,4 +522,60 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get kmAbbreviation => 'km';
+
+  @override
+  String get blindModeActivated =>
+      'Blind mode activated. Tap anywhere on the screen to speak your destination.';
+
+  @override
+  String get listening => 'Listening.';
+
+  @override
+  String get didNotCatch => 'I didn\'t catch that. Please tap again.';
+
+  @override
+  String findingRoute(Object text) {
+    return 'You said $text. I am finding your route now.';
+  }
+
+  @override
+  String get settingsOpened => 'Settings opened.';
+
+  @override
+  String get blindDestNotUnderstood =>
+      'Sorry, I could not understand the destination. Please tap to try again.';
+
+  @override
+  String get blindNoRoute =>
+      'Sorry, I could not find a bus route to that destination.';
+
+  @override
+  String blindTransferRoute(Object line) {
+    return 'Route found. This requires a transfer. Starting with line $line.';
+  }
+
+  @override
+  String blindDirectRoute(Object line) {
+    return 'Route found. Taking line $line.';
+  }
+
+  @override
+  String get blindNavStarted => 'Navigation started.';
+
+  @override
+  String get blindError =>
+      'An error occurred connecting to the server. Please try again.';
+
+  @override
+  String get blindModeTitle => 'Blind Mode (Voice Only)';
+
+  @override
+  String get blindModeSubtitle =>
+      'Simplifies the app into a screen-tap voice interface.';
+
+  @override
+  String get blindModeEnabled => 'Blind mode enabled.';
+
+  @override
+  String get blindModeDisabled => 'Blind mode disabled.';
 }

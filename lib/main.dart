@@ -50,6 +50,7 @@ class BasiraApp extends ConsumerWidget {
         Locale('ar'),
         Locale('fr'),
       ],
+
       localizationsDelegates: [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

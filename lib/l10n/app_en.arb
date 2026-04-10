@@ -160,5 +160,23 @@
   "tapToSelect": "Tap to select",
   "lineAbbreviation": "L{number}",
   "minAbbreviation": "min",
-  "kmAbbreviation": "km"
+  "kmAbbreviation": "km",
+  "blindModeActivated": "Blind mode activated. Tap anywhere on the screen to speak your destination.",
+  "listening": "Listening.",
+  "didNotCatch": "I didn't catch that. Please tap again.",
+  "findingRoute": "You said {text}. I am finding your route now.",
+  "settingsOpened": "Settings opened.",
+  "blindDestNotUnderstood": "Sorry, I could not understand the destination. Please tap to try again.",
+  "blindNoRoute": "Sorry, I could not find a bus route to that destination.",
+  "blindTransferRoute": "Route found. This requires a transfer. Starting with line {line}.",
+  "blindDirectRoute": "Route found. Taking line {line}.",
+  "blindNavStarted": "Navigation started.",
+  "blindError": "An error occurred connecting to the server. Please try again.",
+  "blindModeTitle": "Blind Mode (Voice Only)",
+  "blindModeSubtitle": "Simplifies the app into a screen-tap voice interface.",
+  "blindModeEnabled": "Blind mode enabled.",
+  "blindModeDisabled": "Blind mode disabled."
 }
+
+
+

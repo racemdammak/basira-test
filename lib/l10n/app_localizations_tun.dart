@@ -517,4 +517,58 @@ class AppLocalizationsTun extends AppLocalizations {
 
   @override
   String get kmAbbreviation => 'كم';
+
+  @override
+  String get blindModeActivated =>
+      'وضع الكفيف تخدم. انزل في أي بلاصة ع الشاشة وقول وين تحب تمشي.';
+
+  @override
+  String get listening => 'قاعد نسمع فيك.';
+
+  @override
+  String get didNotCatch => 'ما سمعتكش بالباهي. عاود انزل وقول.';
+
+  @override
+  String findingRoute(Object text) {
+    return 'قلت $text. تو نلوجلك ع الكار.';
+  }
+
+  @override
+  String get settingsOpened => 'حلينا الإعدادات.';
+
+  @override
+  String get blindDestNotUnderstood =>
+      'سامحني ما فهمتش البلاصة. عاود انزل وتكلم.';
+
+  @override
+  String get blindNoRoute => 'سامحني، ما لقيتش كار للبلاصة هذيكا.';
+
+  @override
+  String blindTransferRoute(Object line) {
+    return 'لقيت الثنية. باش تبدل الكار. نبداو بالخط رقم $line.';
+  }
+
+  @override
+  String blindDirectRoute(Object line) {
+    return 'لقيت الثنية. اركب في الخط رقم $line.';
+  }
+
+  @override
+  String get blindNavStarted => 'بدأ التوجيه.';
+
+  @override
+  String get blindError => 'فما مشكلة في الكونكسيون. عاود جرب.';
+
+  @override
+  String get blindModeTitle => 'Blind Mode (Voice Only)';
+
+  @override
+  String get blindModeSubtitle =>
+      'Simplifies the app into a screen-tap voice interface.';
+
+  @override
+  String get blindModeEnabled => 'Blind mode enabled.';
+
+  @override
+  String get blindModeDisabled => 'Blind mode disabled.';
 }

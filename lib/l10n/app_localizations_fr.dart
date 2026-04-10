@@ -526,4 +526,60 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get kmAbbreviation => 'km';
+
+  @override
+  String get blindModeActivated =>
+      'Mode aveugle activé. Appuyez n\'importe où sur l\'écran pour dire votre destination.';
+
+  @override
+  String get listening => 'Écoute en cours.';
+
+  @override
+  String get didNotCatch =>
+      'Je n\'ai pas bien compris. Veuillez appuyer à nouveau.';
+
+  @override
+  String findingRoute(Object text) {
+    return 'Vous avez dit $text. Je recherche votre itinéraire maintenant.';
+  }
+
+  @override
+  String get settingsOpened => 'Paramètres ouverts.';
+
+  @override
+  String get blindDestNotUnderstood =>
+      'Désolé, je n\'ai pas compris la destination. Veuillez réessayer.';
+
+  @override
+  String get blindNoRoute =>
+      'Désolé, je n\'ai trouvé aucun bus vers cette destination.';
+
+  @override
+  String blindTransferRoute(Object line) {
+    return 'Itinéraire trouvé. Cela nécessite une correspondance. On commence par la ligne $line.';
+  }
+
+  @override
+  String blindDirectRoute(Object line) {
+    return 'Itinéraire trouvé. Prenez la ligne $line.';
+  }
+
+  @override
+  String get blindNavStarted => 'Navigation démarrée.';
+
+  @override
+  String get blindError => 'Erreur de connexion. Veuillez réessayer.';
+
+  @override
+  String get blindModeTitle => 'Mode Aveugle (Vocal uniquement)';
+
+  @override
+  String get blindModeSubtitle =>
+      'Simplifie l\'application en une interface vocale tactile.';
+
+  @override
+  String get blindModeEnabled => 'Mode aveugle activé.';
+
+  @override
+  String get blindModeDisabled => 'Mode aveugle désactivé.';
 }

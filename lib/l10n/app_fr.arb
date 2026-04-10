@@ -160,5 +160,23 @@
   "tapToSelect": "Appuyez pour sélectionner",
   "lineAbbreviation": "L{number}",
   "minAbbreviation": "min",
-  "kmAbbreviation": "km"
+  "kmAbbreviation": "km",
+  "blindModeActivated": "Mode aveugle activé. Appuyez n'importe où sur l'écran pour dire votre destination.",
+  "listening": "Écoute en cours.",
+  "didNotCatch": "Je n'ai pas bien compris. Veuillez appuyer à nouveau.",
+  "findingRoute": "Vous avez dit {text}. Je recherche votre itinéraire maintenant.",
+  "settingsOpened": "Paramètres ouverts.",
+  "blindDestNotUnderstood": "Désolé, je n'ai pas compris la destination. Veuillez réessayer.",
+  "blindNoRoute": "Désolé, je n'ai trouvé aucun bus vers cette destination.",
+  "blindTransferRoute": "Itinéraire trouvé. Cela nécessite une correspondance. On commence par la ligne {line}.",
+  "blindDirectRoute": "Itinéraire trouvé. Prenez la ligne {line}.",
+  "blindNavStarted": "Navigation démarrée.",
+  "blindError": "Erreur de connexion. Veuillez réessayer.",
+  "blindModeTitle": "Mode Aveugle (Vocal uniquement)",
+  "blindModeSubtitle": "Simplifie l'application en une interface vocale tactile.",
+  "blindModeEnabled": "Mode aveugle activé.",
+  "blindModeDisabled": "Mode aveugle désactivé."
 }
+
+
+

@@ -160,5 +160,23 @@
   "tapToSelect": "اضغط للاختيار",
   "lineAbbreviation": "خ {number}",
   "minAbbreviation": "دق",
-  "kmAbbreviation": "كم"
+  "kmAbbreviation": "كم",
+  "blindModeActivated": "تم تفعيل وضع الكفيف. اضغط في أي مكان على الشاشة للتحدث بوجهتك.",
+  "listening": "جاري الاستماع.",
+  "didNotCatch": "لم أسمع ذلك جيداً. يرجى الضغط مرة أخرى.",
+  "findingRoute": "لقد قلت {text}. جاري البحث عن المسار الآن.",
+  "settingsOpened": "تم فتح الإعدادات.",
+  "blindDestNotUnderstood": "عذراً، لم أتمكن من فهم الوجهة. يرجى الضغط للمحاولة مرة أخرى.",
+  "blindNoRoute": "عذراً، لم أتمكن من العثور على مسار حافلة إلى تلك الوجهة.",
+  "blindTransferRoute": "تم العثور على المسار. هذا يتطلب تبديل الحافلة. سنبدأ بالخط رقم {line}.",
+  "blindDirectRoute": "تم العثور على المسار. استقل الخط رقم {line}.",
+  "blindNavStarted": "بدأ التوجيه.",
+  "blindError": "حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.",
+  "blindModeTitle": "وضع المكفوفين (صوت فقط)",
+  "blindModeSubtitle": "تبسيط التطبيق واجهة صوتية تعمل باللمس.",
+  "blindModeEnabled": "تم تفعيل وضع المكفوفين.",
+  "blindModeDisabled": "تم تعطيل وضع المكفوفين."
 }
+
+
+

@@ -48,8 +48,6 @@ class SttService {
     switch (locale) {
       case 'ar':
         return 'ar_SA';
-      case 'tun':
-        return 'ar_TN';
       case 'fr':
         return 'fr_FR';
       case 'en':
@@ -58,4 +56,5 @@ class SttService {
         return 'fr_FR';
     }
   }
+
 }

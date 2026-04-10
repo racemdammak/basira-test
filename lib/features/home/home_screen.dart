@@ -13,14 +13,21 @@ import '../trip/station_picker_screen.dart';
 import '../trip/my_trips_screen.dart';
 import '../schedule/schedule_screen.dart';
 import '../nearby/nearby_stations_screen.dart';
-import '../crowd/crowd_patterns_screen.dart';
-import '../about/about_screen.dart';
+import 'blind_home_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
+  
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // --- THIS IS THE BLIND MODE HIJACK ---
+    final isBlindMode = ref.watch(blindModeProvider);
+    if (isBlindMode) {
+      return const BlindHomeScreen(); // Completely intercepts the UI
+    }
+    // ------------------------------------
+
     final l10n = AppLocalizations.of(context);
     final localeCode = ref.watch(localeStringProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -71,7 +78,7 @@ class HomeScreen extends ConsumerWidget {
                 const SizedBox(height: 10),
                 
                 // --- Modern Hero Banner ---
-                _buildModernHero(context, l10n, localeCode),
+                _buildModernHero(context, l10n),
 
                 const SizedBox(height: 32),
 
@@ -147,7 +154,7 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildModernHero(BuildContext context, AppLocalizations l10n, String localeCode) {
+  Widget _buildModernHero(BuildContext context, AppLocalizations l10n) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(32),

@@ -20,11 +20,7 @@ class TtsService {
   String _localeCode(String locale) {
     switch (locale) {
       case 'ar':
-        return 'ar-SA';
-      case 'tun':
-        return 'ar-TN';
-      case 'fr':
-        return 'fr-FR';
+        return 'ar_SA';
       case 'en':
         return 'en-US';
       default:

@@ -19,7 +19,8 @@ final localeProvider = StateProvider<Locale>((ref) {
 
 // Language code helper
 final languageCodeProvider = Provider<String>((ref) {
-  return ref.watch(localeProvider).languageCode;
+  final locale = ref.watch(localeProvider);
+  return locale.languageCode;
 });
 
 final localeStringProvider = Provider<String>((ref) {
@@ -32,9 +33,9 @@ final ttsLocaleProvider = Provider<String>((ref) {
   switch (code) {
     case 'fr': return 'fr-FR';
     case 'ar': return 'ar-SA';
-    case 'tun': return 'ar-TN';
     default: return 'en-US';
   }
+
 });
 
 // Repositories
@@ -183,3 +184,33 @@ class DarkModeNotifier extends StateNotifier<bool> {
     await prefs.setBool(_keyDarkMode, state);
   }
 }
+
+const _keyBlindMode = 'blind_mode';
+
+final blindModeProvider = StateNotifierProvider<BlindModeNotifier, bool>((ref) {
+  return BlindModeNotifier();
+});
+
+class BlindModeNotifier extends StateNotifier<bool> {
+  BlindModeNotifier() : super(false) {
+    _load();
+  }
+
+  Future<void> _load() async {
+    final prefs = await SharedPreferences.getInstance();
+    state = prefs.getBool(_keyBlindMode) ?? false;
+  }
+
+  Future<void> toggle() async {
+    state = !state;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyBlindMode, state);
+  }
+
+  Future<void> setBlindMode(bool value) async {
+    state = value;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyBlindMode, state);
+  }
+}
+

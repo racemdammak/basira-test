@@ -1067,6 +1067,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'km'**
   String get kmAbbreviation;
+
+  /// No description provided for @blindModeActivated.
+  ///
+  /// In en, this message translates to:
+  /// **'Blind mode activated. Tap anywhere on the screen to speak your destination.'**
+  String get blindModeActivated;
+
+  /// No description provided for @listening.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening.'**
+  String get listening;
+
+  /// No description provided for @didNotCatch.
+  ///
+  /// In en, this message translates to:
+  /// **'I didn\'t catch that. Please tap again.'**
+  String get didNotCatch;
+
+  /// No description provided for @findingRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'You said {text}. I am finding your route now.'**
+  String findingRoute(Object text);
+
+  /// No description provided for @settingsOpened.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings opened.'**
+  String get settingsOpened;
+
+  /// No description provided for @blindDestNotUnderstood.
+  ///
+  /// In en, this message translates to:
+  /// **'Sorry, I could not understand the destination. Please tap to try again.'**
+  String get blindDestNotUnderstood;
+
+  /// No description provided for @blindNoRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'Sorry, I could not find a bus route to that destination.'**
+  String get blindNoRoute;
+
+  /// No description provided for @blindTransferRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'Route found. This requires a transfer. Starting with line {line}.'**
+  String blindTransferRoute(Object line);
+
+  /// No description provided for @blindDirectRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'Route found. Taking line {line}.'**
+  String blindDirectRoute(Object line);
+
+  /// No description provided for @blindNavStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigation started.'**
+  String get blindNavStarted;
+
+  /// No description provided for @blindError.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred connecting to the server. Please try again.'**
+  String get blindError;
+
+  /// No description provided for @blindModeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Blind Mode (Voice Only)'**
+  String get blindModeTitle;
+
+  /// No description provided for @blindModeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Simplifies the app into a screen-tap voice interface.'**
+  String get blindModeSubtitle;
+
+  /// No description provided for @blindModeEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Blind mode enabled.'**
+  String get blindModeEnabled;
+
+  /// No description provided for @blindModeDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Blind mode disabled.'**
+  String get blindModeDisabled;
 }
 
 class _AppLocalizationsDelegate

@@ -160,5 +160,17 @@
   "tapToSelect": "انزل باش تختار",
   "lineAbbreviation": "خ {number}",
   "minAbbreviation": "دق",
-  "kmAbbreviation": "كم"
+  "kmAbbreviation": "كم",
+  "blindModeActivated": "وضع الكفيف تخدم. انزل في أي بلاصة ع الشاشة وقول وين تحب تمشي.",
+  "listening": "قاعد نسمع فيك.",
+  "didNotCatch": "ما سمعتكش بالباهي. عاود انزل وقول.",
+  "findingRoute": "قلت {text}. تو نلوجلك ع الكار.",
+  "settingsOpened": "حلينا الإعدادات.",
+  "blindDestNotUnderstood": "سامحني ما فهمتش البلاصة. عاود انزل وتكلم.",
+  "blindNoRoute": "سامحني، ما لقيتش كار للبلاصة هذيكا.",
+  "blindTransferRoute": "لقيت الثنية. باش تبدل الكار. نبداو بالخط رقم {line}.",
+  "blindDirectRoute": "لقيت الثنية. اركب في الخط رقم {line}.",
+  "blindNavStarted": "بدأ التوجيه.",
+  "blindError": "فما مشكلة في الكونكسيون. عاود جرب."
 }
+

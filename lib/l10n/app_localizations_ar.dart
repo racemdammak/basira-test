@@ -518,4 +518,58 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get kmAbbreviation => 'كم';
+
+  @override
+  String get blindModeActivated =>
+      'تم تفعيل وضع الكفيف. اضغط في أي مكان على الشاشة للتحدث بوجهتك.';
+
+  @override
+  String get listening => 'جاري الاستماع.';
+
+  @override
+  String get didNotCatch => 'لم أسمع ذلك جيداً. يرجى الضغط مرة أخرى.';
+
+  @override
+  String findingRoute(Object text) {
+    return 'لقد قلت $text. جاري البحث عن المسار الآن.';
+  }
+
+  @override
+  String get settingsOpened => 'تم فتح الإعدادات.';
+
+  @override
+  String get blindDestNotUnderstood =>
+      'عذراً، لم أتمكن من فهم الوجهة. يرجى الضغط للمحاولة مرة أخرى.';
+
+  @override
+  String get blindNoRoute =>
+      'عذراً، لم أتمكن من العثور على مسار حافلة إلى تلك الوجهة.';
+
+  @override
+  String blindTransferRoute(Object line) {
+    return 'تم العثور على المسار. هذا يتطلب تبديل الحافلة. سنبدأ بالخط رقم $line.';
+  }
+
+  @override
+  String blindDirectRoute(Object line) {
+    return 'تم العثور على المسار. استقل الخط رقم $line.';
+  }
+
+  @override
+  String get blindNavStarted => 'بدأ التوجيه.';
+
+  @override
+  String get blindError => 'حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get blindModeTitle => 'وضع المكفوفين (صوت فقط)';
+
+  @override
+  String get blindModeSubtitle => 'تبسيط التطبيق واجهة صوتية تعمل باللمس.';
+
+  @override
+  String get blindModeEnabled => 'تم تفعيل وضع المكفوفين.';
+
+  @override
+  String get blindModeDisabled => 'تم تعطيل وضع المكفوفين.';
 }

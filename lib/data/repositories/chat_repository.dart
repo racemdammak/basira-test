@@ -1,3 +1,4 @@
+import 'dart:convert';
 import '../../core/services/gemini_service.dart';
 import 'bus_repository.dart';
 
@@ -13,9 +14,44 @@ class ChatRepository {
     );
   }
 
+  // --- NEW: AI INTENT EXTRACTOR FOR BLIND MODE ---
+  Future<Map<String, String>?> extractRouteIntent(String userMessage) async {
+    final prompt = '''
+You are an intent extractor for the Basira Sfax transit app.
+Extract the origin and destination station IDs from the user's message.
+Available station IDs: bab_bhar, centre_ville, nassria, gare_sncft, port_sfax, hopital_hb, route_tunis_km2, route_tunis_km4, sakiet_ezzit, route_mahdia_km3, route_mahdia_km5, sakiet_eddaier, sidi_mansour, route_teniour_km3, chihia, route_gremda_km3, gremda, route_el_ain_km3, el_ain, m_chaker_km3, m_chaker_km6, route_soukra_km3, aeroport, cite_el_habib, route_gabes_km3, sfax_sud, thyna.
+
+Map common Arabic, French, and English words to their IDs:
+"مطار" , "matar" , "airport" -> aeroport
+"سبيطار" , "مستشفى" , "hopital" , "hospital" -> hopital_hb
+"محطة" , "ترينو" , "train" -> gare_sncft
+"ساقية" , "sakiet" -> sakiet_ezzit
+"شيحية" , "shia" , "chihia" -> chihia
+"باب بحر" , "beb bhar" , "bab bhar" -> bab_bhar
+"نصرية" , "nasria" , "nassria" -> nassria
+
+If the user's origin is not explicitly mentioned, ALWAYS default to "bab_bhar".
+Return ONLY a valid JSON object with "origin" and "destination" keys. Do not include markdown blocks, greetings, or any other text.
+Example: {"origin": "bab_bhar", "destination": "aeroport"}
+''';
+    final response = await _service.sendMessage(userMessage: userMessage, systemPrompt: prompt);
+    try {
+      // Clean the response just in case Gemini wraps it in markdown (```json ... ```)
+      final cleaned = response.replaceAll('```json', '').replaceAll('```', '').trim();
+      final Map<String, dynamic> data = jsonDecode(cleaned);
+      return {
+         'origin': data['origin'].toString(),
+         'destination': data['destination'].toString(),
+      };
+    } catch (e) {
+      print('Intent Extraction Error: $e');
+      return null;
+    }
+  }
+
   Future<String> _buildSystemPrompt(String lang) async {
-    final langNames = {'ar': 'Arabic', 'fr': 'French', 'tun': 'Tunisian Arabic', 'en': 'English'};
-    final langName = langNames[lang] ?? 'French';
+    final langNames = {'ar': 'Arabic', 'fr': 'French', 'en': 'English'};
+    final langName = langNames[lang] ?? 'Arabic';
 
     final buses = await _busRepository.getBuses();
     final busJson = buses.map((b) => {
@@ -25,40 +61,30 @@ class ChatRepository {
       'occupancy': '${b.currentOccupancy}/${b.capacity}',
       'status': b.occupancyLabel,
       'nextDeparture': b.nextDeparture.toIso8601String(),
-      'ramp': b.rampAvailable,
-      'lowFloor': b.isLowFloor,
     }).toList();
 
     return '''
-You are Basira, an AI assistant for the SORETRAS bus network in Sfax, Tunisia.
-You help users with bus schedules, routes, accessibility info, and travel planning.
-Always respond in $langName.
+You are Basira, a smart AI assistant for the SORETRAS bus network in Sfax, Tunisia.
+You help people find buses, schedules, and navigate the city.
+Always respond ONLY in $langName. 
 
-IMPORTANT - PHONETIC CORRECTIONS:
-The speech-to-text engine often mishears Tunisian station names. If the user asks about weird locations, map them to the correct Sfax stations:
-- "North Korea", "Nasria", "Nessria" -> Nassria
-- "Bendford", "Beb bar", "Bab bar", "Pepper" -> Bab Bhar
+PHONETIC CORRECTIONS FOR VOICE:
+The speech engine often mishears these Sfaxian stations:
+- "North Korea", "Nasria" -> Nassria
+- "Bendford", "Pepper", "Bab bar" -> Bab Bhar
 - "Shake it", "Sakiet" -> Sakiet Ezzit
 - "Chia", "Shia" -> Chihia
-- "Matar", "Airport" -> Aéroport
+- "Airport", "Matar" -> Aéroport
 
-Here is the current bus data:
-$busJson
-
-Key bus lines:
-- Line 1: Nassria ↔ Bab Bhar (every 20 min, 05:30-22:00)
-- Line 2: Sfax Sud ↔ Université (every 25 min, 05:45-21:30)
-- Line 4: Aéroport ↔ Médina (every 30 min, 06:00-21:00)
-- Line 6: Sakiet Ezzit ↔ Gare Routière (every 20 min, 05:30-22:00)
-- Line 10: Chihia ↔ Nassria (every 25 min, 05:40-21:40)
-- Line 15: Hay Ennour ↔ Centre Ville (every 30 min, 06:00-21:30)
-
-All buses have a capacity of 20 passengers.
-Some buses have ramps and/or low floors for accessibility.
-If a user asks about something not related to Sfax bus transit, politely redirect them.
-Keep responses concise and helpful.
+INSTRUCTIONS:
+1. User current data: $busJson
+2. Be concise but precise about times.
+3. If they ask when a bus comes, look at 'nextDeparture'.
+4. If they want to go somewhere, suggest the best line.
+5. If they ask in another language, respond ONLY in $langName.
 ''';
   }
+
 
   void clearHistory() => _service.clearHistory();
 }
