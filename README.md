@@ -82,15 +82,3 @@ GEMINI_API_KEY=your_gemini_api_key_here
 
 ## Localization
 Basira is built for a diverse community and features a solid internationalization setup. We utilize Flutter's `flutter_localizations` package configured via the `l10n.yaml` file. The primary localization assets are managed through `.arb` files located in `lib/l10n/`. The app natively supports dynamically switching between languages (like Arabic, French, and Tunisian Derja) to deliver a localized user experience.
-
-## Contributing
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## License
-MIT License (or your chosen license) - see the [LICENSE](LICENSE) file for details.
