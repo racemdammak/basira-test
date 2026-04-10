@@ -1,4 +1,4 @@
-# 🚌 Basira - Your AI companion for accessible travel in Sfax
+# 🚌 Basira - Your AI companion for an accessible Sfax
 
 ![Flutter](https://img.shields.io/badge/Flutter-3.x-blue.svg)
 ![Accessibility](https://img.shields.io/badge/Accessibility-First-green.svg)
