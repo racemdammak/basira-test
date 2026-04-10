@@ -1,6 +1,4 @@
 # Basira
-> Navigate Sfax seamlessly, inclusively, and confidently.
-
 ## About
 Basira is an inclusive bus companion application designed specifically for the SORETRAS public transport network in Sfax, Tunisia. Built with accessibility at its core, Basira empowers all commuters—including the visually impaired—to navigate the city's bus system with independence and ease. By combining real-time navigation, an intelligent AI assistant, and an intuitive voice-driven interface, Basira ensures that public transport is accessible to everyone.
 
