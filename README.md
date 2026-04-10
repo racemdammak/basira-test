@@ -1,4 +1,12 @@
-# Basira
+# 🚌 Basira - Your AI companion for accessible travel in Sfax
+
+![Flutter](https://img.shields.io/badge/Flutter-3.x-blue.svg)
+![Accessibility](https://img.shields.io/badge/Accessibility-First-green.svg)
+![AI](https://img.shields.io/badge/AI-Gemini-orange.svg)
+
+**Basira** is a mobility-as-a-service platform for citizens with disabilities in Sfax, Tunisia. It optimizes the SORETRAS bus network through a transit pipeline, voice-first assistive design, and AI-powered route planning.
+
+---
 ## About
 Basira is an inclusive bus companion application designed specifically for the SORETRAS public transport network in Sfax, Tunisia. Built with accessibility at its core, Basira empowers all commuters—including the visually impaired—to navigate the city's bus system with independence and ease. By combining real-time navigation, an intelligent AI assistant, and an intuitive voice-driven interface, Basira ensures that public transport is accessible to everyone.
 
@@ -34,6 +42,18 @@ Basira is an inclusive bus companion application designed specifically for the S
 - [Flutter SDK](https://docs.flutter.dev/get-started/install) `^3.11.4`
 - Active Android development setup (Android Studio & SDK configured)
 - An Android device or emulator for testing
+
+### 📦 Dependencies
+Basira relies on the following key packages:
+- `flutter_riverpod` / `riverpod` — state management
+- `flutter_tts`, `speech_to_text` — voice assistance
+- `dio` — HTTP / API client
+- `csv` — CSV parsing
+- `google_maps_flutter`, `flutter_map`, `latlong2` — map and geospatial support
+- `shared_preferences` — persisted user settings
+- `flutter_dotenv` — environment configuration
+
+---
 
 ### Installation
 
@@ -80,5 +100,15 @@ MAPS_API_KEY=your_google_maps_api_key_here
 GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
-## Localization
-Basira is built for a diverse community and features a solid internationalization setup. We utilize Flutter's `flutter_localizations` package configured via the `l10n.yaml` file. The primary localization assets are managed through `.arb` files located in `lib/l10n/`. The app natively supports dynamically switching between languages (like Arabic, French, and Tunisian Derja) to deliver a localized user experience.
+## 🔮 Future Roadmap
+Recommended improvements for production-grade deployment:
+- replace CSV injection with live GTFS or REST transit feeds,
+- add robust unit and widget tests for providers and repository logic,
+- secure external API keys and remove hard-coded placeholders,
+- add fallback behavior for TTS/STT failures,
+- integrate real occupancy/crowd sensing and transport alerts.
+
+---
+
+## ✅ Summary
+Basira is a strong accessibility-first Flutter application that cleanly separates UI, state, and data layers. The current implementation uses a synthetic CSV data injection engine but is architected for a future hot-swap to live GTFS/REST transit sources, while delivering voice-first and haptic-first experiences for users with disabilities.
